@@ -1,11 +1,11 @@
 ﻿using Library.API.Models;
+using Library.API.Project.Interfaces.Service;
+using Library.API.ViewModels;
 
 namespace Library.API.Interfaces.Service
 {
-    public interface IBookService
+    public interface IBookService: IBaseService<BookEntityModel>
     {
-        BookEntityModel Post(BookEntityModel model);
-        Task<IEnumerable<BookEntityModel>> GetAll();
-        Task<BookEntityModel> GetById(int id);
+        BookEntityModel Post(BookViewModel model);
     }
 }

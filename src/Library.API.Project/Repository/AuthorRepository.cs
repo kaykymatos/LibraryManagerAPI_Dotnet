@@ -30,8 +30,6 @@ namespace Library.API.Repository
         public async Task<AuthorEntityModel> GetById(int id)
         {
             var response = await _context.AuthorModel!.Where(x => x.Id == id).FirstOrDefaultAsync();
-            if (response == null)
-                return new AuthorEntityModel();
             return response;
         }
     }

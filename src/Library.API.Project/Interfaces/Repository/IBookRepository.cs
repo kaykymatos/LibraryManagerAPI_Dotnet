@@ -1,11 +1,9 @@
 ﻿using Library.API.Models;
+using Library.API.Project.Interfaces.Repository;
 
 namespace Library.API.Interfaces.Repository
 {
-    public interface IBookRepository
+    public interface IBookRepository: IBaseRepository<BookEntityModel>
     {
-        void Post(BookEntityModel model);
-        Task<IEnumerable<BookEntityModel>> GetAll();
-        Task<BookEntityModel> GetById(int id);
     }
 }

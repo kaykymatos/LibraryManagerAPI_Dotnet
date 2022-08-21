@@ -1,5 +1,6 @@
 ﻿using Library.API.Interfaces.Service;
 using Library.API.Models;
+using Library.API.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Library.API.Controllers
@@ -20,7 +21,10 @@ namespace Library.API.Controllers
         public async Task<ActionResult<IEnumerable<AuthorEntityModel>>> GetAllAuthorModels()
         {
             var response = await _service.GetAll();
-            return Ok(response);
+            if (IsResponseNull(response))
+                return Ok(response);
+
+            return NoContent();
         }
 
         // GET: api/AuthorModels/5
@@ -28,20 +32,26 @@ namespace Library.API.Controllers
         public async Task<ActionResult<AuthorEntityModel>> GetAuthorModelById(int id)
         {
             var response = await _service.GetById(id);
-            if (response == null)
-                return BadRequest("Nenhum autor foi encontrado com esse id!");
-
-            return Ok(response);
+            if (IsResponseNull(response))
+                return Ok(response);
+            return NotFound($"Autor não encontrado com o Id {id}!");
         }
 
         // POST: api/AuthorModels
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public ActionResult<AuthorEntityModel> PostAuthorModel(AuthorEntityModel authorModel)
+        public ActionResult<AuthorEntityModel> PostAuthorModel(AuthorViewModel authorModel)
         {
             var response = _service.Post(authorModel);
-
             return Ok(response);
+        }
+
+        private bool IsResponseNull(object model)
+        {
+            if (model == null)
+                return false;
+
+            return true;
         }
 
     }

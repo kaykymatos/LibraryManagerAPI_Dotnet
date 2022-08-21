@@ -21,17 +21,14 @@ namespace Library.API.Repository
 
         public async Task<IEnumerable<BookEntityModel>> GetAll()
         {
-            var response = await _context.BookModel!.ToListAsync();
-
+            var response = await _context.BookModel!.ToListAsync();          
             return response;
 
         }
 
         public async Task<BookEntityModel> GetById(int id)
         {
-            var response = await _context.BookModel!.Where(x => x.Id == id).FirstOrDefaultAsync();
-            if (response == null)
-                return new BookEntityModel();
+            var response = await _context.BookModel!.Where(x => x.Id == id).FirstOrDefaultAsync();           
             return response;
         }
 

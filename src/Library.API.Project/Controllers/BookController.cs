@@ -1,6 +1,8 @@
 ﻿using Library.API.Interfaces.Service;
 using Library.API.Models;
+using Library.API.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Library.API.Controllers
 {
@@ -20,7 +22,10 @@ namespace Library.API.Controllers
         public async Task<ActionResult<IEnumerable<BookEntityModel>>> GetAllBookModel()
         {
             var response = await _service.GetAll();
-            return Ok(response);
+            if (IsResponseNull(response))
+                return Ok(response);
+
+            return NoContent();
         }
 
         // GET: api/Book/5
@@ -28,16 +33,25 @@ namespace Library.API.Controllers
         public async Task<ActionResult<BookEntityModel>> GetBookModelById(int id)
         {
             var response = await _service.GetById(id);
-            return Ok(response);
+            if (IsResponseNull(response))
+                return Ok(response);
+            return NotFound($"Livro não encontrado com o Id {id}!");
         }
 
         // POST: api/Book
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public ActionResult<BookEntityModel> PostBookModel(BookEntityModel bookModel)
+        public ActionResult<BookEntityModel> PostBookModel(BookViewModel bookModel)
         {
             var response = _service.Post(bookModel);
             return Ok(response);
+        }
+        private bool IsResponseNull(object model)
+        {
+            if (model == null)
+                return false;
+
+            return true;
         }
 
     }
