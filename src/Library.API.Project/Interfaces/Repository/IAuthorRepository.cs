@@ -3,7 +3,7 @@ using Library.API.Project.Interfaces.Repository;
 
 namespace Library.API.Interfaces.Repository
 {
-    public interface IAuthorRepository: IBaseRepository<AuthorEntityModel>
+    public interface IAuthorRepository : IBaseRepository<AuthorEntityModel>
     {
     }
 }

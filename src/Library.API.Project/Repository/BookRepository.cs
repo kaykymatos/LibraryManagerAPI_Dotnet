@@ -21,15 +21,15 @@ namespace Library.API.Repository
 
         public async Task<IEnumerable<BookEntityModel>> GetAll()
         {
-            var response = await _context.BookModel!.ToListAsync();          
+            var response = await _context.BookModel!.ToListAsync();
             return response;
 
         }
 
-        public async Task<BookEntityModel> GetById(int id)
+        public BookEntityModel GetById(int id)
         {
-            var response = await _context.BookModel!.Where(x => x.Id == id).FirstOrDefaultAsync();           
-            return response;
+            var response = _context.BookModel!.Where(x => x.Id == id).FirstOrDefault();
+            return response!;
         }
 
         public async void UpdateModel(BookEntityModel model)
@@ -43,6 +43,17 @@ namespace Library.API.Repository
             {
                 throw e;
             }
+        }
+
+        public void Update(BookEntityModel model)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Delete(BookEntityModel model)
+        {
+            _context.BookModel!.Remove(model);
+            _context.SaveChanges();
         }
     }
 }

@@ -1,11 +1,9 @@
-﻿using Library.API.Models;
-using Library.API.ViewModels;
-
-namespace Library.API.Project.Interfaces.Service
+﻿namespace Library.API.Project.Interfaces.Service
 {
-    public interface IBaseService<T>where T : class
+    public interface IBaseService<T> where T : class
     {
         Task<IEnumerable<T>> GetAll();
-        Task<T> GetById(int id);
+        T GetById(int id);
+        bool DeleteById(int id);
     }
 }

@@ -16,7 +16,6 @@ namespace Library.API.Controllers
             _service = service;
         }
 
-        // GET: api/AuthorModels
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AuthorEntityModel>>> GetAllAuthorModels()
         {
@@ -27,18 +26,15 @@ namespace Library.API.Controllers
             return NoContent();
         }
 
-        // GET: api/AuthorModels/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<AuthorEntityModel>> GetAuthorModelById(int id)
+        public ActionResult<AuthorEntityModel> GetAuthorModelById(int id)
         {
-            var response = await _service.GetById(id);
+            var response = _service.GetById(id);
             if (IsResponseNull(response))
                 return Ok(response);
             return NotFound($"Autor não encontrado com o Id {id}!");
         }
 
-        // POST: api/AuthorModels
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public ActionResult<AuthorEntityModel> PostAuthorModel(AuthorViewModel authorModel)
         {
@@ -46,7 +42,17 @@ namespace Library.API.Controllers
             return Ok(response);
         }
 
-        private bool IsResponseNull(object model)
+        [HttpDelete("{id}")]
+        public ActionResult<AuthorEntityModel> DeletAuthorModel(int id)
+        {
+            var response = _service.DeleteById(id);
+            if (response)
+                return Ok("O Objeto foi deeltado com sucesso!");
+
+            return NotFound("Objeto nao encontrado!");
+        }
+
+        private static bool IsResponseNull(object model)
         {
             if (model == null)
                 return false;

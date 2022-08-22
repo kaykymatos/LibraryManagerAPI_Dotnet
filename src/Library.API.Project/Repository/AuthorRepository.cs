@@ -27,10 +27,22 @@ namespace Library.API.Repository
 
         }
 
-        public async Task<AuthorEntityModel> GetById(int id)
+        public AuthorEntityModel GetById(int id)
         {
-            var response = await _context.AuthorModel!.Where(x => x.Id == id).FirstOrDefaultAsync();
-            return response;
+            var response = _context.AuthorModel!.Where(x => x.Id == id).FirstOrDefault();
+            return response!;
         }
+
+        public void Update(AuthorEntityModel model)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Delete(AuthorEntityModel model)
+        {
+            _context.AuthorModel!.Remove(model);
+            _context.SaveChanges();
+        }
+
     }
 }

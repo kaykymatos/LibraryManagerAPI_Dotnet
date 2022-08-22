@@ -26,22 +26,41 @@ namespace Library.API.Service
             return response;
         }
 
-        public async Task<BookEntityModel> GetById(int id)
+        public BookEntityModel GetById(int id)
         {
-            var response = await _repository.GetById(id);
+            var response = _repository.GetById(id);
             return response;
         }
+
         public BookEntityModel ViewModelToEntityModel(BookViewModel viewModel)
         {
-            BookEntityModel model = new BookEntityModel
+            BookEntityModel model = new()
             {
-                Title = viewModel.Title,    
-                BookDescription = viewModel.BookDescription,    
-                AuthorId = viewModel.AuthorId,  
-                LaunchDate = viewModel.LaunchDate,  
+                Title = viewModel.Title,
+                BookDescription = viewModel.BookDescription,
+                AuthorId = viewModel.AuthorId,
+                LaunchDate = viewModel.LaunchDate,
                 CreatedDate = DateTime.Now
             };
             return model;
+        }
+
+        public BookEntityModel UpdateById(int id, BookViewModel entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool DeleteById(int id)
+        {
+            if (id <= 0)
+                return false;
+
+            var model = this.GetById(id);
+            if (model == null)
+                return false;
+
+            _repository.Delete(model);
+            return true;
         }
     }
 }

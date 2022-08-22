@@ -26,14 +26,33 @@ namespace Library.API.Service
             return response;
         }
 
-        public async Task<AuthorEntityModel> GetById(int id)
+        public AuthorEntityModel GetById(int id)
         {
-            var response = await _repository.GetById(id);
+            var response = _repository.GetById(id);
             return response;
+        }
+
+
+        public AuthorEntityModel UpdateById(int id, AuthorViewModel entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool DeleteById(int id)
+        {
+            if (id <= 0)
+                return false;
+
+            var model = this.GetById(id);
+            if (model == null)
+                return false;
+
+            _repository.Delete(model);
+            return true;
         }
         public AuthorEntityModel ViewModelToEntityModel(AuthorViewModel viewModel)
         {
-            AuthorEntityModel model = new AuthorEntityModel
+            AuthorEntityModel model = new()
             {
                 Name = viewModel.Name,
                 BirthDate = viewModel.BirthDate,
@@ -41,6 +60,5 @@ namespace Library.API.Service
             };
             return model;
         }
-
     }
 }
