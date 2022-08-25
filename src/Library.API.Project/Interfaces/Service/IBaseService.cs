@@ -1,9 +1,10 @@
 ﻿namespace Library.API.Project.Interfaces.Service
 {
-    public interface IBaseService<T> where T : class
+    public interface IBaseService<TEntity, TViewModel> where TEntity : class where TViewModel : class
     {
-        Task<IEnumerable<T>> GetAll();
-        T GetById(int id);
+        Task<IEnumerable<TEntity>> GetAll();
+        TEntity GetById(int id);
         bool DeleteById(int id);
+        TEntity ConvertViewModelToModel(TViewModel model);
     }
 }

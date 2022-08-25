@@ -4,10 +4,10 @@ using Library.API.ViewModels;
 
 namespace Library.API.Interfaces.Service
 {
-    public interface IBookService : IBaseService<BookEntityModel>
+    public interface IBookService : IBaseService<BookEntityModel, BookModel>
     {
-        BookEntityModel Post(BookViewModel entity);
+        BookEntityModel Post(BookModel entity);
 
-        BookEntityModel UpdateById(int id, BookViewModel entity);
+        BookEntityModel UpdateById(int id, BookModel entity);
     }
 }

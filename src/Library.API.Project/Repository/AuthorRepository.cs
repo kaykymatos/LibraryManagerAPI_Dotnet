@@ -21,15 +21,14 @@ namespace Library.API.Repository
 
         public async Task<IEnumerable<AuthorEntityModel>> GetAll()
         {
-            var response = await _context.AuthorModel!.ToListAsync();
-
+            var response = await _context.AuthorEntityModel!.ToListAsync();
             return response;
 
         }
 
         public AuthorEntityModel GetById(int id)
         {
-            var response = _context.AuthorModel!.Where(x => x.Id == id).FirstOrDefault();
+            var response = _context.AuthorEntityModel!.Where(x => x.Id == id).FirstOrDefault();
             return response!;
         }
 
@@ -40,7 +39,7 @@ namespace Library.API.Repository
 
         public void Delete(AuthorEntityModel model)
         {
-            _context.AuthorModel!.Remove(model);
+            _context.AuthorEntityModel!.Remove(model);
             _context.SaveChanges();
         }
 

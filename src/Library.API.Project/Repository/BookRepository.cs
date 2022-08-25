@@ -21,29 +21,18 @@ namespace Library.API.Repository
 
         public async Task<IEnumerable<BookEntityModel>> GetAll()
         {
-            var response = await _context.BookModel!.ToListAsync();
+            var response = await _context.BookEntityModel!.ToListAsync();
             return response;
 
         }
 
         public BookEntityModel GetById(int id)
         {
-            var response = _context.BookModel!.Where(x => x.Id == id).FirstOrDefault();
+            var response = _context.BookEntityModel!.Where(x => x.Id == id).FirstOrDefault();
             return response!;
         }
 
-        public async void UpdateModel(BookEntityModel model)
-        {
-            _context.Entry(model).State = EntityState.Modified;
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException e)
-            {
-                throw e;
-            }
-        }
+
 
         public void Update(BookEntityModel model)
         {
@@ -52,7 +41,7 @@ namespace Library.API.Repository
 
         public void Delete(BookEntityModel model)
         {
-            _context.BookModel!.Remove(model);
+            _context.BookEntityModel!.Remove(model);
             _context.SaveChanges();
         }
     }

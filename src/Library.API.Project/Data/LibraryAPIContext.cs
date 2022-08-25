@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Library.API.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Library.API.Data
 {
@@ -9,8 +10,17 @@ namespace Library.API.Data
         {
         }
 
-        public DbSet<Library.API.Models.AuthorEntityModel>? AuthorModel { get; set; }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<BookEntityModel>()
+                .HasOne(x => x.Author)
+                .WithMany(x => x.Books)
+                .HasForeignKey(x => x.AuthorId)
+                .OnDelete(DeleteBehavior.Restrict);
+        }
 
-        public DbSet<Library.API.Models.BookEntityModel>? BookModel { get; set; }
+        public DbSet<Library.API.Models.AuthorEntityModel>? AuthorEntityModel { get; set; }
+
+        public DbSet<Library.API.Models.BookEntityModel>? BookEntityModel { get; set; }
     }
 }

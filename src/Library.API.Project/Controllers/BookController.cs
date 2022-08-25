@@ -36,10 +36,14 @@ namespace Library.API.Controllers
         }
 
         [HttpPost]
-        public ActionResult<BookEntityModel> PostBookModel(BookViewModel bookModel)
+        public ActionResult<BookEntityModel> PostBookModel(BookModel bookModel)
         {
             var response = _service.Post(bookModel);
-            return Ok(response);
+            if (IsResponseNull(response))
+                return Ok(response);
+
+            return BadRequest(response);
+
         }
 
         [HttpDelete("{id}")]
@@ -47,7 +51,7 @@ namespace Library.API.Controllers
         {
             var response = _service.DeleteById(id);
             if (response)
-                return Ok("O Objeto foi deeltado com sucesso!");
+                return Ok("O Objeto foi deletado com sucesso!");
 
             return NotFound("Objeto nao encontrado!");
         }

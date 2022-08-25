@@ -1,6 +1,9 @@
-﻿namespace Library.API.ViewModels
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace Library.API.ViewModels
 {
-    public class AuthorViewModel
+    [Keyless]
+    public class AuthorModel
     {
         public string Name { get; set; } = default!;
         public DateTime BirthDate { get; set; }

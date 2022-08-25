@@ -4,9 +4,9 @@ using Library.API.ViewModels;
 
 namespace Library.API.Interfaces.Service
 {
-    public interface IAuthorService : IBaseService<AuthorEntityModel>
+    public interface IAuthorService : IBaseService<AuthorEntityModel, AuthorModel>
     {
-        AuthorEntityModel Post(AuthorViewModel entity);
-        AuthorEntityModel UpdateById(int id, AuthorViewModel entity);
+        AuthorEntityModel Post(AuthorModel entity);
+        AuthorEntityModel UpdateById(int id, AuthorModel entity);
     }
 }

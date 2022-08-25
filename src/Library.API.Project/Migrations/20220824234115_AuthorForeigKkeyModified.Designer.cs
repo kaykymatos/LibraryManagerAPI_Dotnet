@@ -4,6 +4,7 @@ using Library.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Library.API.Migrations
 {
     [DbContext(typeof(LibraryAPIContext))]
-    partial class LibraryAPIContextModelSnapshot : ModelSnapshot
+    [Migration("20220824234115_AuthorForeigKkeyModified")]
+    partial class AuthorForeigKkeyModified
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -77,23 +79,18 @@ namespace Library.API.Migrations
 
                     b.HasIndex("AuthorId");
 
-                    b.ToTable("Books_Table");
+                    b.ToTable("BookModel");
                 });
 
             modelBuilder.Entity("Library.API.Models.BookEntityModel", b =>
                 {
                     b.HasOne("Library.API.Models.AuthorEntityModel", "Author")
-                        .WithMany("Books")
+                        .WithMany()
                         .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Author");
-                });
-
-            modelBuilder.Entity("Library.API.Models.AuthorEntityModel", b =>
-                {
-                    b.Navigation("Books");
                 });
 #pragma warning restore 612, 618
         }

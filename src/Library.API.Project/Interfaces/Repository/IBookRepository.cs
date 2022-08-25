@@ -5,5 +5,6 @@ namespace Library.API.Interfaces.Repository
 {
     public interface IBookRepository : IBaseRepository<BookEntityModel>
     {
+        void Update(BookEntityModel model);
     }
 }

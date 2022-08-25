@@ -13,9 +13,9 @@ namespace Library.API.Service
             _repository = repository;
         }
 
-        public AuthorEntityModel Post(AuthorViewModel model)
+        public AuthorEntityModel Post(AuthorModel model)
         {
-            var modelConvert = ViewModelToEntityModel(model);
+            var modelConvert = ConvertViewModelToModel(model);
             _repository.Post(modelConvert);
             return modelConvert;
         }
@@ -33,7 +33,7 @@ namespace Library.API.Service
         }
 
 
-        public AuthorEntityModel UpdateById(int id, AuthorViewModel entity)
+        public AuthorEntityModel UpdateById(int id, AuthorModel entity)
         {
             throw new NotImplementedException();
         }
@@ -50,15 +50,17 @@ namespace Library.API.Service
             _repository.Delete(model);
             return true;
         }
-        public AuthorEntityModel ViewModelToEntityModel(AuthorViewModel viewModel)
+
+
+        public AuthorEntityModel ConvertViewModelToModel(AuthorModel model)
         {
-            AuthorEntityModel model = new()
+            AuthorEntityModel entityModel = new()
             {
-                Name = viewModel.Name,
-                BirthDate = viewModel.BirthDate,
+                Name = model.Name,
+                BirthDate = model.BirthDate,
                 CreatedDate = DateTime.Now
             };
-            return model;
+            return entityModel;
         }
     }
 }

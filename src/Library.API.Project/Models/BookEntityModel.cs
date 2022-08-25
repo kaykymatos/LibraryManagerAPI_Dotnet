@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Library.API.Models
 {
+    [Table("Books_Table")]
     public class BookEntityModel
     {
         [Key]
@@ -19,8 +20,7 @@ namespace Library.API.Models
         [Required]
         [ForeignKey("Author")]
         public int AuthorId { get; set; }
-        [JsonIgnore]
-        private AuthorEntityModel Author { get; set; } = default!;
+        public AuthorEntityModel Author { get; set; } = default!;
         public DateTime LaunchDate { get; set; }
         public DateTime CreatedDate { get; set; } = DateTime.Now;
     }

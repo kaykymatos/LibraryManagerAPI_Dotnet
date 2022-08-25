@@ -1,6 +1,9 @@
-﻿namespace Library.API.ViewModels
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace Library.API.ViewModels
 {
-    public class BookViewModel
+    [Keyless]
+    public class BookModel
     {
         public string Title { get; set; } = default!;
         public string BookDescription { get; set; } = default!;
