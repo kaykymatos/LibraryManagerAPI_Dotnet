@@ -1,10 +1,11 @@
-﻿namespace Library.API.Project.Interfaces.Repository
+﻿namespace Library.API.Project.Project.Interfaces.Repository
 {
-    public interface IBaseRepository<T> where T : class
+    public interface IBaseRepository<TEntity> where TEntity : class
     {
-        void Post(T entity);
-        Task<IEnumerable<T>> GetAll();
-        T GetById(int id);
-        void Delete(T entity);
+        Task<TEntity> PostAsync(TEntity entity);
+        Task<TEntity> UpdateAsync(TEntity entitie);
+        Task<IEnumerable<TEntity>> GetAllAsync();
+        Task<TEntity> GetByIdAsync(int id);
+        Task<bool> DeleteAsync(TEntity entity);
     }
 }

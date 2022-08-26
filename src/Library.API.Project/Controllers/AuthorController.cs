@@ -1,9 +1,9 @@
-﻿using Library.API.Interfaces.Service;
-using Library.API.Models;
-using Library.API.ViewModels;
+﻿using Library.API.Project.Interfaces.Service;
+using Library.API.Project.Models;
+using Library.API.Project.Project.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Library.API.Controllers
+namespace Library.API.Project.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -19,7 +19,7 @@ namespace Library.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AuthorEntityModel>>> GetAllAuthorModels()
         {
-            var response = await _service.GetAll();
+            var response = await _service.GetAllAsync();
             if (IsResponseNull(response))
                 return Ok(response);
 
@@ -27,29 +27,38 @@ namespace Library.API.Controllers
         }
 
         [HttpGet("{id}")]
-        public ActionResult<AuthorEntityModel> GetAuthorModelById(int id)
+        public async Task<ActionResult<AuthorEntityModel>> GetAuthorModelById(int id)
         {
-            var response = _service.GetById(id);
+            var response = await _service.GetByIdAsync(id);
             if (IsResponseNull(response))
                 return Ok(response);
             return NotFound($"Autor não encontrado com o Id {id}!");
         }
 
         [HttpPost]
-        public ActionResult<AuthorEntityModel> PostAuthorModel(AuthorModel authorModel)
+        public async Task<ActionResult<AuthorEntityModel>> PostAuthorModel(AuthorModel authorModel)
         {
-            var response = _service.Post(authorModel);
+            var response = await _service.PostAsync(authorModel);
             if (IsResponseNull(response))
                 return Ok(response);
 
             return BadRequest(response);
 
         }
+        [HttpPut]
+        public async Task<ActionResult<AuthorEntityModel>> PutAuthorModel(int id, AuthorModel authorModel)
+        {
+            var response = await _service.UpdateByIdAsync(id, authorModel);
+            if (IsResponseNull(response))
+                return Ok(response);
+
+            return BadRequest(response);
+        }
 
         [HttpDelete("{id}")]
-        public ActionResult<AuthorEntityModel> DeletAuthorModel(int id)
+        public async Task<ActionResult<AuthorEntityModel>> DeletAuthorModel(int id)
         {
-            var response = _service.DeleteById(id);
+            var response = await _service.DeleteByIdAsync(id);
             if (response)
                 return Ok("O Objeto foi deletado com sucesso!");
 

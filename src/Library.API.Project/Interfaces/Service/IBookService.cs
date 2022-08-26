@@ -1,13 +1,10 @@
-﻿using Library.API.Models;
-using Library.API.Project.Interfaces.Service;
-using Library.API.ViewModels;
+﻿using Library.API.Project.Models;
+using Library.API.Project.Project.Interfaces.Service;
+using Library.API.Project.Project.ViewModels;
 
-namespace Library.API.Interfaces.Service
+namespace Library.API.Project.Interfaces.Service
 {
     public interface IBookService : IBaseService<BookEntityModel, BookModel>
     {
-        BookEntityModel Post(BookModel entity);
-
-        BookEntityModel UpdateById(int id, BookModel entity);
     }
 }

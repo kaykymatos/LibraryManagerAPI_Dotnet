@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Library.API.Models
+namespace Library.API.Project.Models
 {
     [Table("Author_Table")]
     public class AuthorEntityModel

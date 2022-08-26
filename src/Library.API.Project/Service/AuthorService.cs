@@ -1,9 +1,9 @@
-﻿using Library.API.Interfaces.Repository;
-using Library.API.Interfaces.Service;
-using Library.API.Models;
-using Library.API.ViewModels;
+﻿using Library.API.Project.Interfaces.Repository;
+using Library.API.Project.Interfaces.Service;
+using Library.API.Project.Models;
+using Library.API.Project.Project.ViewModels;
 
-namespace Library.API.Service
+namespace Library.API.Project.Service
 {
     public class AuthorService : IAuthorService
     {
@@ -13,41 +13,48 @@ namespace Library.API.Service
             _repository = repository;
         }
 
-        public AuthorEntityModel Post(AuthorModel model)
+        public async Task<AuthorEntityModel> PostAsync(AuthorModel model)
         {
             var modelConvert = ConvertViewModelToModel(model);
-            _repository.Post(modelConvert);
+            await _repository.PostAsync(modelConvert);
             return modelConvert;
         }
 
-        public async Task<IEnumerable<AuthorEntityModel>> GetAll()
+        public async Task<IEnumerable<AuthorEntityModel>> GetAllAsync()
         {
-            var response = await _repository.GetAll();
+            var response = await _repository.GetAllAsync();
             return response;
         }
 
-        public AuthorEntityModel GetById(int id)
+        public async Task<AuthorEntityModel> GetByIdAsync(int id)
         {
-            var response = _repository.GetById(id);
+            var response = await _repository.GetByIdAsync(id);
             return response;
         }
 
 
-        public AuthorEntityModel UpdateById(int id, AuthorModel entity)
+        public async Task<AuthorEntityModel> UpdateByIdAsync(int id, AuthorModel entity)
         {
-            throw new NotImplementedException();
+            var convertedModel = this.ConvertViewModelToModel(entity);
+            convertedModel.Id = id;
+            var updateModel = await _repository.UpdateAsync(convertedModel);
+
+            if (updateModel != null)
+                return updateModel;
+
+            return null!;
         }
 
-        public bool DeleteById(int id)
+        public async Task<bool> DeleteByIdAsync(int id)
         {
             if (id <= 0)
                 return false;
 
-            var model = this.GetById(id);
+            var model = await this.GetByIdAsync(id);
             if (model == null)
                 return false;
 
-            _repository.Delete(model);
+            await _repository.DeleteAsync(model);
             return true;
         }
 

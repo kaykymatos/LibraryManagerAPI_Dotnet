@@ -1,7 +1,7 @@
-﻿using Library.API.Models;
+﻿using Library.API.Project.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Library.API.Data
+namespace Library.API.Project.Data
 {
     public class LibraryAPIContext : DbContext
     {
@@ -19,8 +19,8 @@ namespace Library.API.Data
                 .OnDelete(DeleteBehavior.Restrict);
         }
 
-        public DbSet<Library.API.Models.AuthorEntityModel>? AuthorEntityModel { get; set; }
+        public DbSet<Library.API.Project.Models.AuthorEntityModel>? AuthorEntityModel { get; set; }
 
-        public DbSet<Library.API.Models.BookEntityModel>? BookEntityModel { get; set; }
+        public DbSet<Library.API.Project.Models.BookEntityModel>? BookEntityModel { get; set; }
     }
 }

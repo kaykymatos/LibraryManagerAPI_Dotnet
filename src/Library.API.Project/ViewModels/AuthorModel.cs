@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Library.API.ViewModels
+namespace Library.API.Project.Project.ViewModels
 {
     [Keyless]
     public class AuthorModel

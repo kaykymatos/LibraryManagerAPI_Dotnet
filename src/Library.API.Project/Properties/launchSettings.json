@@ -9,7 +9,7 @@
     }
   },
   "profiles": {
-    "Library.API": {
+    "Library.API.Project": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,

@@ -1,9 +1,9 @@
-﻿using Library.API.Interfaces.Service;
-using Library.API.Models;
-using Library.API.ViewModels;
+﻿using Library.API.Project.Interfaces.Service;
+using Library.API.Project.Models;
+using Library.API.Project.Project.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Library.API.Controllers
+namespace Library.API.Project.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -19,7 +19,7 @@ namespace Library.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<BookEntityModel>>> GetAllBookModel()
         {
-            var response = await _service.GetAll();
+            var response = await _service.GetAllAsync();
             if (IsResponseNull(response))
                 return Ok(response);
 
@@ -27,18 +27,18 @@ namespace Library.API.Controllers
         }
 
         [HttpGet("{id}")]
-        public ActionResult<BookEntityModel> GetBookModelById(int id)
+        public async Task<ActionResult<BookEntityModel>> GetBookModelById(int id)
         {
-            var response = _service.GetById(id);
+            var response = await _service.GetByIdAsync(id);
             if (IsResponseNull(response))
                 return Ok(response);
             return NotFound($"Livro não encontrado com o Id {id}!");
         }
 
         [HttpPost]
-        public ActionResult<BookEntityModel> PostBookModel(BookModel bookModel)
+        public async Task<ActionResult<BookEntityModel>> PostBookModel(BookModel bookModel)
         {
-            var response = _service.Post(bookModel);
+            var response = await _service.PostAsync(bookModel);
             if (IsResponseNull(response))
                 return Ok(response);
 
@@ -46,10 +46,20 @@ namespace Library.API.Controllers
 
         }
 
-        [HttpDelete("{id}")]
-        public ActionResult<AuthorEntityModel> DeletBookModel(int id)
+        [HttpPut]
+        public async Task<ActionResult<BookEntityModel>> PutAuthorModel(int id, BookModel bookModel)
         {
-            var response = _service.DeleteById(id);
+            var response = await _service.UpdateByIdAsync(id, bookModel);
+            if (IsResponseNull(response))
+                return Ok(response);
+
+            return BadRequest(response);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<AuthorEntityModel>> DeletBookModel(int id)
+        {
+            var response = await _service.DeleteByIdAsync(id);
             if (response)
                 return Ok("O Objeto foi deletado com sucesso!");
 

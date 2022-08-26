@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace Library.API.Migrations
+namespace Library.API.Project.Migrations
 {
     public partial class AuthorForeigKkeyModified : Migration
     {
