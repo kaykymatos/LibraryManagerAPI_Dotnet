@@ -1,10 +1,10 @@
-﻿using Library.API.Project.Models;
+﻿using Library.API.Project.Models.Entities;
+using Library.API.Project.Models.ViewModels;
 using Library.API.Project.Project.Interfaces.Service;
-using Library.API.Project.Project.ViewModels;
 
 namespace Library.API.Project.Interfaces.Service
 {
-    public interface IBookService : IBaseService<BookEntityModel, BookModel>
+    public interface IBookService : IBaseService<BookEntity, BookModel>
     {
     }
 }

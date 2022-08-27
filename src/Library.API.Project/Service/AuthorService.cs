@@ -1,7 +1,9 @@
-﻿using Library.API.Project.Interfaces.Repository;
+﻿using FluentValidation.Results;
+using Library.API.Project.Interfaces.Repository;
 using Library.API.Project.Interfaces.Service;
-using Library.API.Project.Models;
-using Library.API.Project.Project.ViewModels;
+using Library.API.Project.Models.Entities;
+using Library.API.Project.Models.ViewModels;
+using Library.API.Project.Validation.ValidationModels.PostValidation;
 
 namespace Library.API.Project.Service
 {
@@ -13,27 +15,31 @@ namespace Library.API.Project.Service
             _repository = repository;
         }
 
-        public async Task<AuthorEntityModel> PostAsync(AuthorModel model)
+        public async Task<ValidationResult> PostAsync(AuthorModel model)
         {
+            var validation = new AuthorModelValidation().Validate(model);
+            if (!validation.IsValid)
+                return validation;
+
             var modelConvert = ConvertViewModelToModel(model);
             await _repository.PostAsync(modelConvert);
-            return modelConvert;
+            return validation;
         }
 
-        public async Task<IEnumerable<AuthorEntityModel>> GetAllAsync()
+        public async Task<IEnumerable<AuthorEntity>> GetAllAsync()
         {
             var response = await _repository.GetAllAsync();
             return response;
         }
 
-        public async Task<AuthorEntityModel> GetByIdAsync(int id)
+        public async Task<AuthorEntity> GetByIdAsync(int id)
         {
             var response = await _repository.GetByIdAsync(id);
             return response;
         }
 
 
-        public async Task<AuthorEntityModel> UpdateByIdAsync(int id, AuthorModel entity)
+        public async Task<AuthorEntity> UpdateByIdAsync(int id, AuthorModel entity)
         {
             var convertedModel = this.ConvertViewModelToModel(entity);
             convertedModel.Id = id;
@@ -59,13 +65,13 @@ namespace Library.API.Project.Service
         }
 
 
-        public AuthorEntityModel ConvertViewModelToModel(AuthorModel model)
+        public AuthorEntity ConvertViewModelToModel(AuthorModel model)
         {
-            AuthorEntityModel entityModel = new()
+            AuthorEntity entityModel = new()
             {
-                Name = model.Name,
-                BirthDate = model.BirthDate,
-                CreatedDate = DateTime.Now
+                Name = model.Name.ToUpper().Trim(),
+                BirthDate = DateTime.Parse(model.BirthDate.ToString("yyyy-MM-dd HH:mm:ss")),
+                CreatedDate = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"))
             };
             return entityModel;
         }

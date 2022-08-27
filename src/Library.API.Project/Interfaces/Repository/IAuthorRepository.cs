@@ -1,10 +1,9 @@
-﻿using Library.API.Project.Models;
+﻿using Library.API.Project.Models.Entities;
 using Library.API.Project.Project.Interfaces.Repository;
 
 namespace Library.API.Project.Interfaces.Repository
 {
-    public interface IAuthorRepository : IBaseRepository<AuthorEntityModel>
+    public interface IAuthorRepository : IBaseRepository<AuthorEntity>
     {
-
     }
 }

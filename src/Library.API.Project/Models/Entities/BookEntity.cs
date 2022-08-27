@@ -2,10 +2,10 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Library.API.Project.Models
+namespace Library.API.Project.Models.Entities
 {
     [Table("Books_Table")]
-    public class BookEntityModel
+    public class BookEntity
     {
         [Key]
         public int Id { get; set; }
@@ -15,12 +15,11 @@ namespace Library.API.Project.Models
         public string Title { get; set; } = default!;
         [Required]
         [MinLength(10)]
-        [MaxLength(255)]
+        [MaxLength(100)]
         public string BookDescription { get; set; } = default!;
-        [Required]
         [ForeignKey("Author")]
         public int AuthorId { get; set; }
-        public AuthorEntityModel Author { get; set; } = default!;
+        public AuthorEntity Author { get; set; } = default!;
         public DateTime LaunchDate { get; set; }
         public DateTime CreatedDate { get; set; } = DateTime.Now;
     }

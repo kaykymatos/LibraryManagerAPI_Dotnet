@@ -1,13 +1,13 @@
 ﻿using Library.API.Project.Interfaces.Service;
-using Library.API.Project.Models;
-using Library.API.Project.Project.ViewModels;
+using Library.API.Project.Models.Entities;
+using Library.API.Project.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Library.API.Project.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class BookController : ControllerBase
+    public class BookController : InternalController
     {
         private readonly IBookService _service;
 
@@ -17,17 +17,17 @@ namespace Library.API.Project.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<BookEntityModel>>> GetAllBookModel()
+        public async Task<ActionResult<IEnumerable<BookEntity>>> GetAllBookModel()
         {
             var response = await _service.GetAllAsync();
             if (IsResponseNull(response))
                 return Ok(response);
 
-            return NoContent();
+            return BadRequest("Nenhum resultado encontrado no banco de dados: " + response);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<BookEntityModel>> GetBookModelById(int id)
+        public async Task<ActionResult<BookEntity>> GetBookModelById(int id)
         {
             var response = await _service.GetByIdAsync(id);
             if (IsResponseNull(response))
@@ -36,18 +36,18 @@ namespace Library.API.Project.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<BookEntityModel>> PostBookModel(BookModel bookModel)
+        public async Task<ActionResult<BookEntity>> PostBookModel(BookModel bookModel)
         {
             var response = await _service.PostAsync(bookModel);
-            if (IsResponseNull(response))
-                return Ok(response);
+            if (IsValidationValid(response))
+                return Ok("Livro cadastrado com sucesso!");
 
-            return BadRequest(response);
+            return BadRequest(ShowErrors(response));
 
         }
 
-        [HttpPut]
-        public async Task<ActionResult<BookEntityModel>> PutAuthorModel(int id, BookModel bookModel)
+        [HttpPut("{id}")]
+        public async Task<ActionResult<BookEntity>> PutAuthorModel(int id, BookModel bookModel)
         {
             var response = await _service.UpdateByIdAsync(id, bookModel);
             if (IsResponseNull(response))
@@ -57,7 +57,7 @@ namespace Library.API.Project.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<AuthorEntityModel>> DeletBookModel(int id)
+        public async Task<ActionResult<AuthorEntity>> DeletBookModel(int id)
         {
             var response = await _service.DeleteByIdAsync(id);
             if (response)
@@ -65,13 +65,5 @@ namespace Library.API.Project.Controllers
 
             return NotFound("Objeto nao encontrado!");
         }
-        private static bool IsResponseNull(object model)
-        {
-            if (model == null)
-                return false;
-
-            return true;
-        }
-
     }
 }

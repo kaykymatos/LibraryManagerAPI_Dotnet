@@ -23,12 +23,8 @@ namespace Library.API.Project.Repository
             return null!;
         }
 
-        public async virtual Task<IEnumerable<TEntity>> GetAllAsync()
-        {
-            var response = await _context.Set<TEntity>()!.ToListAsync();
-            return response;
-
-        }
+        public async virtual Task<IEnumerable<TEntity>> GetAllAsync() =>
+            await _context.Set<TEntity>()!.ToListAsync();
 
         public async virtual Task<TEntity> GetByIdAsync(int id)
         {

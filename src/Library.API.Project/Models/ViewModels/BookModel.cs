@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Library.API.Project.Project.ViewModels
+namespace Library.API.Project.Models.ViewModels
 {
     [Keyless]
     public class BookModel

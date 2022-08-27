@@ -1,13 +1,13 @@
 ﻿using Library.API.Project.Interfaces.Service;
-using Library.API.Project.Models;
-using Library.API.Project.Project.ViewModels;
+using Library.API.Project.Models.Entities;
+using Library.API.Project.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Library.API.Project.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthorController : ControllerBase
+    public class AuthorController : InternalController
     {
         private readonly IAuthorService _service;
 
@@ -17,17 +17,17 @@ namespace Library.API.Project.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<AuthorEntityModel>>> GetAllAuthorModels()
+        public async Task<ActionResult<IEnumerable<AuthorEntity>>> GetAllAuthorModels()
         {
             var response = await _service.GetAllAsync();
             if (IsResponseNull(response))
                 return Ok(response);
 
-            return NoContent();
+            return BadRequest("Nenhum resultado encontrado no banco de dados: " + response);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<AuthorEntityModel>> GetAuthorModelById(int id)
+        public async Task<ActionResult<AuthorEntity>> GetAuthorModelById(int id)
         {
             var response = await _service.GetByIdAsync(id);
             if (IsResponseNull(response))
@@ -36,17 +36,17 @@ namespace Library.API.Project.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<AuthorEntityModel>> PostAuthorModel(AuthorModel authorModel)
+        public async Task<ActionResult<AuthorEntity>> PostAuthorModel(AuthorModel authorModel)
         {
             var response = await _service.PostAsync(authorModel);
-            if (IsResponseNull(response))
-                return Ok(response);
+            if (IsValidationValid(response))
+                return Ok("Autor cadastrado com sucesso!");
 
-            return BadRequest(response);
+            return BadRequest(ShowErrors(response));
 
         }
-        [HttpPut]
-        public async Task<ActionResult<AuthorEntityModel>> PutAuthorModel(int id, AuthorModel authorModel)
+        [HttpPut("{id}")]
+        public async Task<ActionResult<AuthorEntity>> PutAuthorModel(int id, AuthorModel authorModel)
         {
             var response = await _service.UpdateByIdAsync(id, authorModel);
             if (IsResponseNull(response))
@@ -56,7 +56,7 @@ namespace Library.API.Project.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<AuthorEntityModel>> DeletAuthorModel(int id)
+        public async Task<ActionResult<AuthorEntity>> DeletAuthorModel(int id)
         {
             var response = await _service.DeleteByIdAsync(id);
             if (response)
@@ -64,14 +64,5 @@ namespace Library.API.Project.Controllers
 
             return NotFound("Objeto nao encontrado!");
         }
-
-        private static bool IsResponseNull(object model)
-        {
-            if (model == null)
-                return false;
-
-            return true;
-        }
-
     }
 }
