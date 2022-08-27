@@ -9,32 +9,34 @@ namespace Library.API.Project.Service
 {
     public class BookService : IBookService
     {
-        private readonly IBookRepository _repository;
-        public BookService(IBookRepository repository)
+        private readonly IBookRepository _bookRepository;
+        private readonly IAuthorRepository _authorRepository;
+        public BookService(IBookRepository bookRepository, IAuthorRepository authorRepository)
         {
-            _repository = repository;
+            _bookRepository = bookRepository;
+            _authorRepository = authorRepository;
         }
 
         public async Task<ValidationResult> PostAsync(BookModel model)
         {
-            var validation = new BookModelValidation().Validate(model);
+            var validation = new BookModelValidation(_authorRepository).Validate(model);
             if (!validation.IsValid)
                 return validation;
 
             var modelConvert = ConvertViewModelToModel(model);
-            await _repository.PostAsync(modelConvert);
+            await _bookRepository.PostAsync(modelConvert);
             return validation;
         }
 
         public async Task<IEnumerable<BookEntity>> GetAllAsync()
         {
-            var response = await _repository.GetAllAsync();
+            var response = await _bookRepository.GetAllAsync();
             return response;
         }
 
         public async Task<BookEntity> GetByIdAsync(int id)
         {
-            var response = await _repository.GetByIdAsync(id);
+            var response = await _bookRepository.GetByIdAsync(id);
             return response;
         }
 
@@ -44,13 +46,13 @@ namespace Library.API.Project.Service
         {
             if (id <= 0)
                 return null!;
-            var findModel = await _repository.GetByIdAsync(id);
+            var findModel = await _bookRepository.GetByIdAsync(id);
             if (findModel == null)
                 return null!;
 
             var convertedModel = this.ConvertViewModelToModel(entity);
             convertedModel.Id = id;
-            var updateModel = await _repository.UpdateAsync(convertedModel);
+            var updateModel = await _bookRepository.UpdateAsync(id,convertedModel);
 
             if (updateModel != null)
                 return updateModel;
@@ -67,12 +69,13 @@ namespace Library.API.Project.Service
             if (model == null)
                 return false;
 
-            var deletedEntity = await _repository.DeleteAsync(model);
-            return deletedEntity;
+            var response = await _bookRepository.DeleteAsync(model);
+            return response;
         }
 
         public BookEntity ConvertViewModelToModel(BookModel model)
         {
+
             BookEntity entityModel = new()
             {
                 Title = model.Title.ToUpper().Trim(),

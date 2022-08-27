@@ -9,10 +9,10 @@ namespace Library.API.Project.Service
 {
     public class AuthorService : IAuthorService
     {
-        private readonly IAuthorRepository _repository;
-        public AuthorService(IAuthorRepository repository)
+        private readonly IAuthorRepository _authorRepository;
+        public AuthorService(IAuthorRepository authorRepository)
         {
-            _repository = repository;
+            _authorRepository = authorRepository;
         }
 
         public async Task<ValidationResult> PostAsync(AuthorModel model)
@@ -22,28 +22,32 @@ namespace Library.API.Project.Service
                 return validation;
 
             var modelConvert = ConvertViewModelToModel(model);
-            await _repository.PostAsync(modelConvert);
+            await _authorRepository.PostAsync(modelConvert);
             return validation;
         }
 
         public async Task<IEnumerable<AuthorEntity>> GetAllAsync()
         {
-            var response = await _repository.GetAllAsync();
+            var response = await _authorRepository.GetAllAsync();
             return response;
         }
 
         public async Task<AuthorEntity> GetByIdAsync(int id)
         {
-            var response = await _repository.GetByIdAsync(id);
+            var response = await _authorRepository.GetByIdAsync(id);
             return response;
         }
 
 
         public async Task<AuthorEntity> UpdateByIdAsync(int id, AuthorModel entity)
         {
+            var findAuthor = await _authorRepository.GetByIdAsync(id);
+            if (findAuthor == null)
+                return null!;
+
             var convertedModel = this.ConvertViewModelToModel(entity);
             convertedModel.Id = id;
-            var updateModel = await _repository.UpdateAsync(convertedModel);
+            var updateModel = await _authorRepository.UpdateAsync(id,convertedModel);
 
             if (updateModel != null)
                 return updateModel;
@@ -60,8 +64,8 @@ namespace Library.API.Project.Service
             if (model == null)
                 return false;
 
-            await _repository.DeleteAsync(model);
-            return true;
+           bool response = await _authorRepository.DeleteAsync(model);
+            return response;
         }
 
 

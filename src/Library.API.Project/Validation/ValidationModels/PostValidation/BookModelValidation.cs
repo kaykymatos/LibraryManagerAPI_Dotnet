@@ -1,13 +1,20 @@
 ﻿using FluentValidation;
+using Library.API.Project.Data;
+using Library.API.Project.Interfaces.Repository;
+using Library.API.Project.Interfaces.Service;
+using Library.API.Project.Models.Entities;
 using Library.API.Project.Models.ViewModels;
 using Library.API.Project.Validation.ErrorMessages;
+using Microsoft.EntityFrameworkCore;
 
 namespace Library.API.Project.Validation.ValidationModels.PostValidation
 {
     public class BookModelValidation : AbstractValidator<BookModel>
     {
-        public BookModelValidation()
+        private readonly IAuthorRepository _authorRepository;
+        public BookModelValidation(IAuthorRepository  bookRepository)
         {
+            _authorRepository = bookRepository;
 
             RuleFor(x => x.Title).NotEmpty().WithMessage(BookErrorMessages.EmptyTitle)
                 .MinimumLength(5).WithMessage(BookErrorMessages.MinLengthTitle)
@@ -21,9 +28,11 @@ namespace Library.API.Project.Validation.ValidationModels.PostValidation
                 .Must(IsLauchDateValid).WithMessage(BookErrorMessages.FutureLaunchDate);
 
             RuleFor(x => x.AuthorId).NotEmpty().WithMessage(BookErrorMessages.EmptyAuthorId)
-                .GreaterThan(0).WithMessage(BookErrorMessages.AuthorIdLength);
+                .GreaterThan(0).WithMessage(BookErrorMessages.AuthorIdLength)
+                .Must(AuthorExists).WithMessage(BookErrorMessages.AuthorIdNotExists);
 
         }
         private bool IsLauchDateValid(DateTime date) => date < DateTime.Now;
+        private bool AuthorExists(int id) => _authorRepository.GetByIdAsync(id).Result != null;
     }
 }

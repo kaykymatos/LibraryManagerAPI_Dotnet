@@ -16,5 +16,7 @@
         public static string EmptyAuthorId = "O campo {PropertyName} não pode ser nulo!";
         public static string AuthorIdLength = "O campo Id do autor deve ser maior que 0!";
 
+        public static string AuthorIdNotExists = "O campo {PropertyName} não foi encontrado no banco de dados!";
+
     }
 }

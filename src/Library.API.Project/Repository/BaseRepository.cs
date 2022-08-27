@@ -28,21 +28,23 @@ namespace Library.API.Project.Repository
 
         public async virtual Task<TEntity> GetByIdAsync(int id)
         {
-            var response = await _context.Set<TEntity>()!.FindAsync(id);
+            var response = await _context.Set<TEntity>().FindAsync(id);
             if (response == null)
                 return null!;
 
             return response;
         }
 
-        public async virtual Task<TEntity> UpdateAsync(TEntity entity)
+        public async virtual Task<TEntity> UpdateAsync(int id, TEntity entity)
         {
-            var updateModel = _context.Update(entity).State = EntityState.Modified;
-            if (updateModel != EntityState.Modified)
-                return null!;
-
+            var local = await this.GetByIdAsync(id);
+            if (local != null)
+            {
+                _context.Entry(local).State = EntityState.Detached;
+            }
+            _context.Entry(entity).State = EntityState.Modified;
             await _context.SaveChangesAsync();
-            return entity;
+            return local!;
         }
 
         public async virtual Task<bool> DeleteAsync(TEntity entity)
