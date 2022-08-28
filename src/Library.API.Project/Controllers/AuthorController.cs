@@ -1,4 +1,5 @@
 ﻿using Library.API.Project.Interfaces.Service;
+using Library.API.Project.Models.DTO;
 using Library.API.Project.Models.Entities;
 using Library.API.Project.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
@@ -17,7 +18,7 @@ namespace Library.API.Project.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<AuthorEntity>>> GetAllAuthorModels()
+        public async Task<ActionResult<IEnumerable<AuthorDTO>>> GetAllAuthorModels()
         {
             var response = await _service.GetAllAsync();
             if (IsResponseNull(response))
@@ -27,9 +28,9 @@ namespace Library.API.Project.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<AuthorEntity>> GetAuthorModelById(int id)
+        public async Task<ActionResult<AuthorDTO>> GetAuthorModelById(int id)
         {
-            var response = await _service.GetByIdAsync(id);
+            var response = await _service.GetDtoByAsync(id);
             if (IsResponseNull(response))
                 return Ok(response);
             return NotFound($"Autor não encontrado com o Id {id}!");
@@ -59,10 +60,10 @@ namespace Library.API.Project.Controllers
         public async Task<ActionResult<AuthorEntity>> DeletAuthorModel(int id)
         {
             var response = await _service.DeleteByIdAsync(id);
-            if (response)
-                return Ok("O Objeto foi deletado com sucesso!");
+            if (response.GetType() == typeof(AuthorEntity))
+                return Ok(response);
 
-            return NotFound("Objeto nao encontrado!");
+            return BadRequest(response);
         }
     }
 }

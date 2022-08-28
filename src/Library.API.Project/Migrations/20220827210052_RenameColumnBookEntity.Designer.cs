@@ -4,6 +4,7 @@ using Library.API.Project.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Library.API.Project.Migrations
 {
     [DbContext(typeof(LibraryAPIContext))]
-    partial class LibraryAPIContextModelSnapshot : ModelSnapshot
+    [Migration("20220827210052_RenameColumnBookEntity")]
+    partial class RenameColumnBookEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -43,7 +45,7 @@ namespace Library.API.Project.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Author_Table", (string)null);
+                    b.ToTable("Author_Table");
                 });
 
             modelBuilder.Entity("Library.API.Project.Models.Entities.BookEntity", b =>
@@ -77,7 +79,7 @@ namespace Library.API.Project.Migrations
 
                     b.HasIndex("AuthorId");
 
-                    b.ToTable("Books_Table", (string)null);
+                    b.ToTable("Books_Table");
                 });
 
             modelBuilder.Entity("Library.API.Project.Models.Entities.BookEntity", b =>

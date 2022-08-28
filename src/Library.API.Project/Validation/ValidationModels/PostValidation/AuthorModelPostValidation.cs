@@ -4,9 +4,9 @@ using Library.API.Project.Validation.ErrorMessages;
 
 namespace Library.API.Project.Validation.ValidationModels.PostValidation
 {
-    public class AuthorModelValidation : AbstractValidator<AuthorModel>
+    public class AuthorModelPostValidation : AbstractValidator<AuthorModel>
     {
-        public AuthorModelValidation()
+        public AuthorModelPostValidation()
         {
             RuleFor(x => x.Name).NotEmpty().WithMessage(AuthorErrorMessages.EmptyName)
                 .MaximumLength(100).WithMessage(AuthorErrorMessages.MaxLengthName)

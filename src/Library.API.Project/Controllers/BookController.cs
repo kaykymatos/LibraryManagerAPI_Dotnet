@@ -1,4 +1,5 @@
 ﻿using Library.API.Project.Interfaces.Service;
+using Library.API.Project.Models.DTO;
 using Library.API.Project.Models.Entities;
 using Library.API.Project.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
@@ -17,26 +18,26 @@ namespace Library.API.Project.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<BookEntity>>> GetAllBookModel()
+        public async Task<ActionResult<IEnumerable<BookDTO>>> GetAllBookModel()
         {
             var response = await _service.GetAllAsync();
             if (IsResponseNull(response))
                 return Ok(response);
 
-            return BadRequest("Nenhum resultado encontrado no banco de dados: " + response);
+            return BadRequest(response);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<BookEntity>> GetBookModelById(int id)
+        public async Task<ActionResult<BookDTO>> GetBookModelById(int id)
         {
-            var response = await _service.GetByIdAsync(id);
+            var response = await _service.GetDtoByAsync(id);
             if (IsResponseNull(response))
                 return Ok(response);
             return NotFound($"Livro não encontrado com o Id {id}!");
         }
 
         [HttpPost]
-        public async Task<ActionResult<BookEntity>> PostBookModel(BookModel bookModel)
+        public async Task<ActionResult<object>> PostBookModel(BookModel bookModel)
         {
             var response = await _service.PostAsync(bookModel);
             if (IsValidationValid(response))
@@ -47,7 +48,7 @@ namespace Library.API.Project.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<BookEntity>> PutAuthorModel(int id, BookModel bookModel)
+        public async Task<ActionResult<BookDTO>> PutAuthorModel(int id, BookModel bookModel)
         {
             var response = await _service.UpdateByIdAsync(id, bookModel);
             if (IsResponseNull(response))
@@ -57,13 +58,13 @@ namespace Library.API.Project.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<AuthorEntity>> DeletBookModel(int id)
+        public async Task<ActionResult<BookEntity>> DeletBookModel(int id)
         {
             var response = await _service.DeleteByIdAsync(id);
-            if (response)
-                return Ok("O Objeto foi deletado com sucesso!");
+            if (response.GetType() == typeof(AuthorEntity))
+                return Ok(response);
 
-            return NotFound("Objeto nao encontrado!");
+            return BadRequest(response);
         }
     }
 }

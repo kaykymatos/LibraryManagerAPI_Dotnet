@@ -1,18 +1,14 @@
 ﻿using FluentValidation;
-using Library.API.Project.Data;
 using Library.API.Project.Interfaces.Repository;
-using Library.API.Project.Interfaces.Service;
-using Library.API.Project.Models.Entities;
 using Library.API.Project.Models.ViewModels;
 using Library.API.Project.Validation.ErrorMessages;
-using Microsoft.EntityFrameworkCore;
 
 namespace Library.API.Project.Validation.ValidationModels.PostValidation
 {
-    public class BookModelValidation : AbstractValidator<BookModel>
+    public class BookModelPostValidation : AbstractValidator<BookModel>
     {
         private readonly IAuthorRepository _authorRepository;
-        public BookModelValidation(IAuthorRepository  bookRepository)
+        public BookModelPostValidation(IAuthorRepository bookRepository)
         {
             _authorRepository = bookRepository;
 
@@ -20,7 +16,7 @@ namespace Library.API.Project.Validation.ValidationModels.PostValidation
                 .MinimumLength(5).WithMessage(BookErrorMessages.MinLengthTitle)
                 .MaximumLength(20).WithMessage(BookErrorMessages.MaxLengthTitle);
 
-            RuleFor(x => x.BookDescription).NotEmpty().WithMessage(BookErrorMessages.EmptyDescription)
+            RuleFor(x => x.Description).NotEmpty().WithMessage(BookErrorMessages.EmptyDescription)
                 .MaximumLength(200).WithMessage(BookErrorMessages.MaxLengthDescription)
                 .MinimumLength(10).WithMessage(BookErrorMessages.MinLengthDescription);
 

@@ -16,7 +16,7 @@ namespace Library.API.Project.Models.Entities
         [Required]
         [MinLength(10)]
         [MaxLength(100)]
-        public string BookDescription { get; set; } = default!;
+        public string Description { get; set; } = default!;
         [ForeignKey("Author")]
         public int AuthorId { get; set; }
         public AuthorEntity Author { get; set; } = default!;

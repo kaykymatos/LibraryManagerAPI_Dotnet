@@ -1,6 +1,7 @@
 ﻿using FluentValidation.Results;
 using Library.API.Project.Interfaces.Repository;
 using Library.API.Project.Interfaces.Service;
+using Library.API.Project.Models.DTO;
 using Library.API.Project.Models.Entities;
 using Library.API.Project.Models.ViewModels;
 using Library.API.Project.Validation.ValidationModels.PostValidation;
@@ -19,72 +20,102 @@ namespace Library.API.Project.Service
 
         public async Task<ValidationResult> PostAsync(BookModel model)
         {
-            var validation = new BookModelValidation(_authorRepository).Validate(model);
+            var validation = new BookModelPostValidation(_authorRepository).Validate(model);
             if (!validation.IsValid)
                 return validation;
 
-            var modelConvert = ConvertViewModelToModel(model);
-            await _bookRepository.PostAsync(modelConvert);
+            var convertModelToEntity = ConvertViewModelToEntity(model);
+            await _bookRepository.PostAsync(convertModelToEntity);
             return validation;
         }
-
-        public async Task<IEnumerable<BookEntity>> GetAllAsync()
+        public async Task<IEnumerable<BookDTO>> GetAllAsync()
         {
             var response = await _bookRepository.GetAllAsync();
-            return response;
+            List<BookDTO> listDTO = new();
+            foreach (var item in response)
+            {
+                var convertModelToDTO = ConvertEntityToDTOModel(item);
+                listDTO.Add(convertModelToDTO);
+            }
+            return listDTO;
         }
-
-        public async Task<BookEntity> GetByIdAsync(int id)
+        public async Task<BookDTO> GetDtoByAsync(int id)
         {
             var response = await _bookRepository.GetByIdAsync(id);
-            return response;
+            if (response == null)
+                return null!;
+            var convertEntityToDTO = ConvertEntityToDTOModel(response);
+            return convertEntityToDTO;
         }
-
-
-
-        public async Task<BookEntity> UpdateByIdAsync(int id, BookModel entity)
+        public async Task<BookEntity> UpdateByIdAsync(int id, BookModel model)
         {
             if (id <= 0)
                 return null!;
-            var findModel = await _bookRepository.GetByIdAsync(id);
-            if (findModel == null)
+            var findBookEntity = await _bookRepository.GetByIdAsync(id);
+            if (findBookEntity == null)
                 return null!;
 
-            var convertedModel = this.ConvertViewModelToModel(entity);
-            convertedModel.Id = id;
-            var updateModel = await _bookRepository.UpdateAsync(id,convertedModel);
+            var convertModelToEntity = ConvertViewModelToEntity(model);
+            convertModelToEntity.Id = id;
+            convertModelToEntity.CreatedDate = findBookEntity.CreatedDate;
+            var updateModel = await _bookRepository.UpdateAsync(id, convertModelToEntity);
 
             if (updateModel != null)
                 return updateModel;
 
             return null!;
         }
-
-        public async Task<bool> DeleteByIdAsync(int id)
+        public async Task<object> DeleteByIdAsync(int id)
         {
-            if (id <= 0)
-                return false;
+            var errosOnDelete = await VerificationOnDeleteAuthorEntity(id);
+            if (errosOnDelete.Count > 0)
+                return errosOnDelete;
 
-            var model = await this.GetByIdAsync(id);
-            if (model == null)
-                return false;
+            var findBookEntity = await this.GetEntityById(id);
 
-            var response = await _bookRepository.DeleteAsync(model);
+            var response = await _bookRepository.DeleteAsync(findBookEntity);
             return response;
         }
-
-        public BookEntity ConvertViewModelToModel(BookModel model)
+        public async Task<BookEntity> GetEntityById(int id)
+        {
+            var entity = await _bookRepository.GetByIdAsync(id);
+            return entity;
+        }
+        public BookEntity ConvertViewModelToEntity(BookModel model)
         {
 
-            BookEntity entityModel = new()
+            BookEntity entity = new()
             {
                 Title = model.Title.ToUpper().Trim(),
-                BookDescription = model.BookDescription.ToUpper().Trim(),
+                Description = model.Description.ToUpper().Trim(),
                 AuthorId = model.AuthorId,
                 LaunchDate = DateTime.Parse(model.LaunchDate.ToString("yyyy-MM-dd HH:mm:ss")),
                 CreatedDate = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"))
             };
-            return entityModel;
+            return entity;
+        }
+        public BookDTO ConvertEntityToDTOModel(BookEntity entity)
+        {
+            var dtoModel = new BookDTO()
+            {
+                Id = entity.Id,
+                Title = entity.Title,
+                Description = entity.Description,
+                AuthorId = entity.AuthorId,
+                LaunchDate = entity.LaunchDate,
+                CreatedDate = entity.CreatedDate
+            };
+            return dtoModel;
+        }
+        public async Task<List<string>> VerificationOnDeleteAuthorEntity(int id)
+        {
+            List<string> errorsVerificationOnDelete = new();
+            if (id <= 0)
+                errorsVerificationOnDelete.Add("O ID deve ser maior que 0");
+            var entityModel = await _authorRepository.GetByIdAsync(id);
+            if (entityModel == null)
+                errorsVerificationOnDelete.Add($"O Livro não foi encontrado no banco de dados com o id: {id}");
+            return errorsVerificationOnDelete;
         }
     }
 }

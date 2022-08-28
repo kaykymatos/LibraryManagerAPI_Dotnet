@@ -1,8 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-namespace Library.API.Project.Models.ViewModels
+﻿namespace Library.API.Project.Models.ViewModels
 {
-    [Keyless]
     public class AuthorModel
     {
         public string Name { get; set; } = default!;

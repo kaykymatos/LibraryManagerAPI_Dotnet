@@ -22,10 +22,8 @@ namespace Library.API.Project.Repository
 
             return null!;
         }
-
         public async virtual Task<IEnumerable<TEntity>> GetAllAsync() =>
             await _context.Set<TEntity>()!.ToListAsync();
-
         public async virtual Task<TEntity> GetByIdAsync(int id)
         {
             var response = await _context.Set<TEntity>().FindAsync(id);
@@ -34,27 +32,25 @@ namespace Library.API.Project.Repository
 
             return response;
         }
-
         public async virtual Task<TEntity> UpdateAsync(int id, TEntity entity)
         {
-            var local = await this.GetByIdAsync(id);
-            if (local != null)
+            var findEntity = await this.GetByIdAsync(id);
+            if (findEntity != null)
             {
-                _context.Entry(local).State = EntityState.Detached;
+                _context.Entry(findEntity).State = EntityState.Detached;
             }
             _context.Entry(entity).State = EntityState.Modified;
             await _context.SaveChangesAsync();
-            return local!;
+            return findEntity!;
         }
-
-        public async virtual Task<bool> DeleteAsync(TEntity entity)
+        public async virtual Task<object> DeleteAsync(TEntity entity)
         {
             var deleteEntityModel = _context.Set<TEntity>()!.Remove(entity);
             if (deleteEntityModel.State != EntityState.Deleted)
-                return false;
+                return $"Ocorreu um probema na Deleção do modelo escolhido";
 
             await _context.SaveChangesAsync();
-            return true;
+            return entity;
         }
     }
 }
