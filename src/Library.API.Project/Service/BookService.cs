@@ -47,13 +47,13 @@ namespace Library.API.Project.Service
             var convertEntityToDTO = ConvertEntityToDTOModel(response);
             return convertEntityToDTO;
         }
-        public async Task<BookEntity> UpdateByIdAsync(int id, BookModel model)
+        public async Task<object> UpdateByIdAsync(int id, BookModel model)
         {
-            if (id <= 0)
-                return null!;
+            var validationModel = await ValidationOnUpdateModel(id, model);
+            if (validationModel.Any())
+                return validationModel;
+
             var findBookEntity = await _bookRepository.GetByIdAsync(id);
-            if (findBookEntity == null)
-                return null!;
 
             var convertModelToEntity = ConvertViewModelToEntity(model);
             convertModelToEntity.Id = id;
@@ -67,8 +67,8 @@ namespace Library.API.Project.Service
         }
         public async Task<object> DeleteByIdAsync(int id)
         {
-            var errosOnDelete = await VerificationOnDeleteAuthorEntity(id);
-            if (errosOnDelete.Count > 0)
+            var errosOnDelete = await VerificationIfModelExists(id);
+            if (errosOnDelete.Any())
                 return errosOnDelete;
 
             var findBookEntity = await this.GetEntityById(id);
@@ -83,7 +83,6 @@ namespace Library.API.Project.Service
         }
         public BookEntity ConvertViewModelToEntity(BookModel model)
         {
-
             BookEntity entity = new()
             {
                 Title = model.Title.ToUpper().Trim(),
@@ -107,15 +106,28 @@ namespace Library.API.Project.Service
             };
             return dtoModel;
         }
-        public async Task<List<string>> VerificationOnDeleteAuthorEntity(int id)
+        public async Task<List<string>> VerificationIfModelExists(int id)
         {
             List<string> errorsVerificationOnDelete = new();
             if (id <= 0)
-                errorsVerificationOnDelete.Add("O ID deve ser maior que 0");
-            var entityModel = await _authorRepository.GetByIdAsync(id);
+                errorsVerificationOnDelete.Add("O ID deve ser maior que 0!");
+            var entityModel = await _bookRepository.GetByIdAsync(id);
             if (entityModel == null)
-                errorsVerificationOnDelete.Add($"O Livro não foi encontrado no banco de dados com o id: {id}");
+                errorsVerificationOnDelete.Add($"O Livro não foi encontrado no banco de dados com o id: {id}!");
             return errorsVerificationOnDelete;
         }
+        public async Task<List<string>> ValidationOnUpdateModel(int id, BookModel model)
+        {
+            var verificationIfExists = await VerificationIfModelExists(id);
+            if (verificationIfExists.Any())
+                return verificationIfExists;
+
+            var validation = new BookModelPostValidation(_authorRepository).Validate(model);
+            if (!validation.IsValid)
+                return validation.Errors.Select(x => x.ErrorMessage).ToList();
+
+            return new List<string>();
+        }
+
     }
 }

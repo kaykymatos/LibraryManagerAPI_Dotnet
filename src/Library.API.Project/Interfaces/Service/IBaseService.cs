@@ -9,6 +9,6 @@ namespace Library.API.Project.Project.Interfaces.Service
         Task<TEntity> GetEntityById(int id);
         Task<object> DeleteByIdAsync(int id);
         Task<ValidationResult> PostAsync(TViewModel entity);
-        Task<TEntity> UpdateByIdAsync(int id, TViewModel entity);
+        Task<object> UpdateByIdAsync(int id, TViewModel entity);
     }
 }

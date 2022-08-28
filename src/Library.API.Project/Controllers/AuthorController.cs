@@ -50,7 +50,7 @@ namespace Library.API.Project.Controllers
         public async Task<ActionResult<AuthorEntity>> PutAuthorModel(int id, AuthorModel authorModel)
         {
             var response = await _service.UpdateByIdAsync(id, authorModel);
-            if (IsResponseNull(response))
+            if (response.GetType() == typeof(AuthorEntity))
                 return Ok(response);
 
             return BadRequest(response);

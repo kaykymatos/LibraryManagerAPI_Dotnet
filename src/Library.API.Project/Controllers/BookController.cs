@@ -51,7 +51,7 @@ namespace Library.API.Project.Controllers
         public async Task<ActionResult<BookDTO>> PutAuthorModel(int id, BookModel bookModel)
         {
             var response = await _service.UpdateByIdAsync(id, bookModel);
-            if (IsResponseNull(response))
+            if (response.GetType() == typeof(BookEntity))
                 return Ok(response);
 
             return BadRequest(response);

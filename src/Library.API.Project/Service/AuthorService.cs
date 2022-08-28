@@ -46,17 +46,18 @@ namespace Library.API.Project.Service
 
             return convertEntityToDTO;
         }
-        public async Task<AuthorEntity> UpdateByIdAsync(int id, AuthorModel model)
+        public async Task<object> UpdateByIdAsync(int id, AuthorModel model)
         {
-            var findAuthorEntity = await _authorRepository.GetByIdAsync(id);
-            if (findAuthorEntity == null)
-                return null!;
+            var verification = await ValidationOnUpdateModel(id, model);
+            if (verification.Any())
+                return verification;
 
+            var findAuthorEntity = await _authorRepository.GetByIdAsync(id);
             var converteModelToEntity = ConvertViewModelToEntity(model);
             converteModelToEntity.Id = id;
             converteModelToEntity.CreatedDate = findAuthorEntity.CreatedDate;
-            var updateModel = await _authorRepository.UpdateAsync(id, converteModelToEntity);
 
+            var updateModel = await _authorRepository.UpdateAsync(id, converteModelToEntity);
             if (updateModel != null)
                 return updateModel;
 
@@ -102,16 +103,38 @@ namespace Library.API.Project.Service
         }
         public async Task<List<string>> VerificationOnDeleteAuthorEntity(int id)
         {
+            var modelExists = await VerificationIfModelExists(id);
+            if (modelExists.Any())
+                return modelExists;
+
             List<string> errorsVerificationOnDelete = new();
-            if (id <= 0)
-                errorsVerificationOnDelete.Add("O ID deve ser maior que 0");
-            var entityModel = await _authorRepository.GetByIdAsync(id);
-            if (entityModel == null)
-                errorsVerificationOnDelete.Add($"O Author não foi encontrado no banco de dados com o id: {id}");
+
             var authorBooks = await _authorRepository.GetAllAuthorBooksByAuthorId(id);
             if (authorBooks.Any())
                 errorsVerificationOnDelete.Add($"O Author com o id {id} tem livros vinculados!");
             return errorsVerificationOnDelete;
+        }
+        public async Task<List<string>> VerificationIfModelExists(int id)
+        {
+            List<string> errorsVerificationOnDelete = new();
+            if (id <= 0)
+                errorsVerificationOnDelete.Add("O ID deve ser maior que 0!");
+            var entityModel = await _authorRepository.GetByIdAsync(id);
+            if (entityModel == null)
+                errorsVerificationOnDelete.Add($"O Autor não foi encontrado no banco de dados com o id: {id}!");
+            return errorsVerificationOnDelete;
+        }
+        public async Task<List<string>> ValidationOnUpdateModel(int id, AuthorModel model)
+        {
+            var verificationIfExists = await VerificationIfModelExists(id);
+            if (verificationIfExists.Any())
+                return verificationIfExists;
+
+            var validation = new AuthorModelPostValidation().Validate(model);
+            if (!validation.IsValid)
+                return validation.Errors.Select(x => x.ErrorMessage).ToList();
+
+            return new List<string>();
         }
     }
 }
