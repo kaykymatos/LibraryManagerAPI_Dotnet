@@ -48,21 +48,21 @@ namespace Library.API.Project.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<BookDTO>> PutAuthorModel(int id, BookModel bookModel)
+        public async Task<ActionResult<object>> PutAuthorModel(int id, BookModel bookModel)
         {
             var response = await _service.UpdateByIdAsync(id, bookModel);
             if (response.GetType() == typeof(BookEntity))
-                return Ok(response);
+                return Ok("Livro atualizado com sucesso!");
 
             return BadRequest(response);
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<BookEntity>> DeletBookModel(int id)
+        public async Task<ActionResult<object>> DeletBookModel(int id)
         {
             var response = await _service.DeleteByIdAsync(id);
-            if (response.GetType() == typeof(AuthorEntity))
-                return Ok(response);
+            if (response.GetType() == typeof(BookEntity))
+                return Ok($"Livro deletado com sucesso!");
 
             return BadRequest(response);
         }

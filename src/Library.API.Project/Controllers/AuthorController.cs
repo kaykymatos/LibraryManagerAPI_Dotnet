@@ -47,21 +47,21 @@ namespace Library.API.Project.Controllers
 
         }
         [HttpPut("{id}")]
-        public async Task<ActionResult<AuthorEntity>> PutAuthorModel(int id, AuthorModel authorModel)
+        public async Task<ActionResult<object>> PutAuthorModel(int id, AuthorModel authorModel)
         {
             var response = await _service.UpdateByIdAsync(id, authorModel);
             if (response.GetType() == typeof(AuthorEntity))
-                return Ok(response);
+                return Ok("Author Atualizado com sucesso!");
 
             return BadRequest(response);
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<AuthorEntity>> DeletAuthorModel(int id)
+        public async Task<ActionResult<object>> DeletAuthorModel(int id)
         {
             var response = await _service.DeleteByIdAsync(id);
             if (response.GetType() == typeof(AuthorEntity))
-                return Ok(response);
+                return Ok($"Author deletado com sucesso!");
 
             return BadRequest(response);
         }

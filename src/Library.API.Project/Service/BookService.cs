@@ -58,12 +58,9 @@ namespace Library.API.Project.Service
             var convertModelToEntity = ConvertViewModelToEntity(model);
             convertModelToEntity.Id = id;
             convertModelToEntity.CreatedDate = findBookEntity.CreatedDate;
-            var updateModel = await _bookRepository.UpdateAsync(id, convertModelToEntity);
+            var response = await _bookRepository.UpdateAsync(id, convertModelToEntity);
 
-            if (updateModel != null)
-                return updateModel;
-
-            return null!;
+            return response;
         }
         public async Task<object> DeleteByIdAsync(int id)
         {
@@ -81,6 +78,7 @@ namespace Library.API.Project.Service
             var entity = await _bookRepository.GetByIdAsync(id);
             return entity;
         }
+
         public BookEntity ConvertViewModelToEntity(BookModel model)
         {
             BookEntity entity = new()

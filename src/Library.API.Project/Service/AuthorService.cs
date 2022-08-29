@@ -11,9 +11,11 @@ namespace Library.API.Project.Service
     public class AuthorService : IAuthorService
     {
         private readonly IAuthorRepository _authorRepository;
-        public AuthorService(IAuthorRepository authorRepository)
+        private readonly IBookRepository _bookRepository;
+        public AuthorService(IAuthorRepository authorRepository, IBookRepository bookRepository)
         {
             _authorRepository = authorRepository;
+            _bookRepository = bookRepository;
         }
 
         public async Task<ValidationResult> PostAsync(AuthorModel model)
@@ -57,11 +59,8 @@ namespace Library.API.Project.Service
             converteModelToEntity.Id = id;
             converteModelToEntity.CreatedDate = findAuthorEntity.CreatedDate;
 
-            var updateModel = await _authorRepository.UpdateAsync(id, converteModelToEntity);
-            if (updateModel != null)
-                return updateModel;
-
-            return null!;
+            var response = await _authorRepository.UpdateAsync(id, converteModelToEntity);
+            return response;
         }
         public async Task<object> DeleteByIdAsync(int id)
         {
@@ -78,6 +77,7 @@ namespace Library.API.Project.Service
             var entity = await _authorRepository.GetByIdAsync(id);
             return entity;
         }
+
         public AuthorEntity ConvertViewModelToEntity(AuthorModel model)
         {
             if (model == null)
@@ -109,7 +109,7 @@ namespace Library.API.Project.Service
 
             List<string> errorsVerificationOnDelete = new();
 
-            var authorBooks = await _authorRepository.GetAllAuthorBooksByAuthorId(id);
+            var authorBooks = await _bookRepository.GetAllAuthorBooksByAuthorId(id);
             if (authorBooks.Any())
                 errorsVerificationOnDelete.Add($"O Author com o id {id} tem livros vinculados!");
             return errorsVerificationOnDelete;

@@ -5,6 +5,6 @@ namespace Library.API.Project.Interfaces.Repository
 {
     public interface IAuthorRepository : IBaseRepository<AuthorEntity>
     {
-        Task<IEnumerable<BookEntity>> GetAllAuthorBooksByAuthorId(int id);
+
     }
 }
