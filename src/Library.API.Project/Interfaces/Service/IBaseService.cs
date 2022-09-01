@@ -1,6 +1,6 @@
 ﻿using FluentValidation.Results;
 
-namespace Library.API.Project.Project.Interfaces.Service
+namespace Library.API.Project.Interfaces.Service
 {
     public interface IBaseService<TEntity, TViewModel, TModelDTO> where TEntity : class where TViewModel : class where TModelDTO : class
     {

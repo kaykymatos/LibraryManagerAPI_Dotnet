@@ -37,7 +37,7 @@ namespace Library.API.Project.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<AuthorEntity>> PostAuthorModel(AuthorModel authorModel)
+        public async Task<ActionResult<AuthorModel>> PostAuthorModel(AuthorModel authorModel)
         {
             var response = await _service.PostAsync(authorModel);
             if (IsValidationValid(response))

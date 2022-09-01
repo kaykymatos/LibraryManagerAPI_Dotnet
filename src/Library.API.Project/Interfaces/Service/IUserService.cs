@@ -4,7 +4,7 @@ using Library.API.Project.Models.ViewModels;
 
 namespace Library.API.Project.Interfaces.Service
 {
-    public interface IBookService : IBaseService<BookEntity, BookModel, BookDTO>
+    public interface IUserService : IBaseService<UserEntity, UserModel, UserDTO>
     {
     }
 }

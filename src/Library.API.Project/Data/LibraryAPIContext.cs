@@ -22,5 +22,7 @@ namespace Library.API.Project.Data
         public DbSet<AuthorEntity>? AuthorEntityModel { get; set; }
 
         public DbSet<BookEntity>? BookEntityModel { get; set; }
+
+        public DbSet<Library.API.Project.Models.Entities.UserEntity>? UserEntity { get; set; }
     }
 }
