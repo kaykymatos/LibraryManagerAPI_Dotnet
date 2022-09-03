@@ -1,4 +1,4 @@
-﻿namespace Library.API.Project.Validation.ErrorMessages
+﻿namespace Library.Project.API.Validation.ErrorMessages
 {
     public static class BookErrorMessages
     {
@@ -8,7 +8,7 @@
 
         public readonly static string EmptyDescription = "O campo {PropertyName} não pode ser nulo!";
         public readonly static string MinLengthDescription = "O tamanho mínimo do campo {PropertyName} é de 10 caracteres!";
-        public readonly static string MaxLengthDescription = "O tamanho máximo do campo {PropertyName} é de 100 caracteres!";
+        public readonly static string MaxLengthDescription = "O tamanho máximo do campo {PropertyName} é de 150 caracteres!";
 
         public readonly static string EmptyLauchDate = "O data do campo {PropertyName} não pode ser nula!";
         public readonly static string FutureLaunchDate = "A data do campo {PropertyName} não pode ser futura!";

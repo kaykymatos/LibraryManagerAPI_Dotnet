@@ -1,6 +1,6 @@
-﻿namespace Library.API.Project.Models.ViewModels
+﻿namespace Library.Project.API.Models.DTO.Post
 {
-    public class BookModel
+    public class BookDTOPost
     {
         public string Title { get; set; } = default!;
         public string Description { get; set; } = default!;

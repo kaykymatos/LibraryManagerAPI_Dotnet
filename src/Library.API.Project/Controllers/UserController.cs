@@ -1,119 +1,73 @@
-﻿using Library.API.Project.Data;
-using Library.API.Project.Models.Entities;
+﻿using Library.Project.API.Interfaces.Service;
+using Library.Project.API.Models.DTO.Get;
+using Library.Project.API.Models.DTO.Post;
+using Library.Project.API.Models.DTO.Put;
+using Library.Project.API.Models.Entities;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
-namespace Library.API.Project.Controllers
+namespace Library.Project.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController : ControllerBase
+    public class UserController : InternalController
     {
-        private readonly LibraryAPIContext _context;
+        private readonly IUserService _service;
 
-        public UserController(LibraryAPIContext context)
+        public UserController(IUserService service)
         {
-            _context = context;
+            _service = service;
         }
 
-        // GET: api/User
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<UserEntity>>> GetUserEntity()
+        public async Task<ActionResult<IEnumerable<UserDTOGet>>> GetAllUserModel()
         {
-            if (_context.UserEntity == null)
-            {
-                return NotFound();
-            }
-            return await _context.UserEntity.ToListAsync();
+            var response = await _service.GetAllAsync();
+            if (!IsResponseNull(response))
+                return Ok(response);
+
+            return BadRequest(response);
         }
 
-        // GET: api/User/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<UserEntity>> GetUserEntity(int id)
+        public async Task<ActionResult<object>> GetUserModelById(int id)
         {
-            if (_context.UserEntity == null)
-            {
-                return NotFound();
-            }
-            var userEntity = await _context.UserEntity.FindAsync(id);
-
-            if (userEntity == null)
-            {
-                return NotFound();
-            }
-
-            return userEntity;
+            var response = await _service.GetDTOModelById(id);
+            if (!IsResponseNull(response))
+                return Ok(response);
+            return NotFound($"Usuário não encontrado com o Id {id}!");
         }
 
-        // PUT: api/User/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutUserEntity(int id, UserEntity userEntity)
-        {
-            if (id != userEntity.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(userEntity).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!UserEntityExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // POST: api/User
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<UserEntity>> PostUserEntity(UserEntity userEntity)
+        public async Task<ActionResult<object>> PostUserModel(UserDTOPost userModel)
         {
-            if (_context.UserEntity == null)
-            {
-                return Problem("Entity set 'LibraryAPIContext.UserEntity'  is null.");
-            }
-            _context.UserEntity.Add(userEntity);
-            await _context.SaveChangesAsync();
+            var response = await _service.PostAsync(userModel);
+            if (IsValidationValid(response))
+                return Ok("Usuário cadastrado com sucesso!");
 
-            return CreatedAtAction("GetUserEntity", new { id = userEntity.Id }, userEntity);
+            return BadRequest(response);
+
         }
 
-        // DELETE: api/User/5
+        [HttpPut("{id}")]
+        public async Task<ActionResult<object>> PutUserModel(int id, UserDTOPut userModel)
+        {
+            var response = await _service.UpdateByIdAsync(id, userModel);
+            if (IsValidationValid(response))
+                return Ok("Usuário atualizado com sucesso!");
+
+            return BadRequest(response);
+        }
+
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUserEntity(int id)
+        public async Task<ActionResult<object>> DeletuserModel(int id)
         {
-            if (_context.UserEntity == null)
-            {
-                return NotFound();
-            }
-            var userEntity = await _context.UserEntity.FindAsync(id);
-            if (userEntity == null)
-            {
-                return NotFound();
-            }
+            var response = await _service.DeleteByIdAsync(id);
+            if (IsValidationValid(response))
+                return Ok($"Usuário deletado com sucesso!");
 
-            _context.UserEntity.Remove(userEntity);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            return BadRequest(response);
         }
+        private static bool IsValidationValid(object responseValue) => responseValue.GetType() == typeof(UserEntity);
 
-        private bool UserEntityExists(int id)
-        {
-            return (_context.UserEntity?.Any(e => e.Id == id)).GetValueOrDefault();
-        }
     }
 }

@@ -1,6 +1,6 @@
-﻿namespace Library.API.Project.Models.DTO
+﻿namespace Library.Project.API.Models.DTO.Get
 {
-    public class BookDTO
+    public class BookDTOGet
     {
         public int Id { get; set; }
         public string Title { get; set; } = default!;

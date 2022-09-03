@@ -1,6 +1,6 @@
-﻿using Library.API.Project.Models.Entities;
+﻿using Library.Project.API.Models.Entities;
 
-namespace Library.API.Project.Interfaces.Repository
+namespace Library.Project.API.Interfaces.Repository
 {
     public interface IUserRepository : IBaseRepository<UserEntity>
     {

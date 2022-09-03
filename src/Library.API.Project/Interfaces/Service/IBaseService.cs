@@ -1,14 +1,16 @@
-﻿using FluentValidation.Results;
-
-namespace Library.API.Project.Interfaces.Service
+﻿namespace Library.Project.API.Interfaces.Service
 {
-    public interface IBaseService<TEntity, TViewModel, TModelDTO> where TEntity : class where TViewModel : class where TModelDTO : class
+    public interface IBaseService<TEntity, TModelDTOUpdate, TModelDTOPost, TModelDTOGet>
+        where TEntity : class
+        where TModelDTOUpdate : class
+        where TModelDTOPost : class
+        where TModelDTOGet : class
     {
-        Task<IEnumerable<TModelDTO>> GetAllAsync();
-        Task<TModelDTO> GetDtoByAsync(int id);
+        Task<IEnumerable<TModelDTOGet>> GetAllAsync();
         Task<TEntity> GetEntityById(int id);
+        Task<TModelDTOGet> GetDTOModelById(int id);
         Task<object> DeleteByIdAsync(int id);
-        Task<ValidationResult> PostAsync(TViewModel entity);
-        Task<object> UpdateByIdAsync(int id, TViewModel entity);
+        Task<object> PostAsync(TModelDTOPost model);
+        Task<object> UpdateByIdAsync(int id, TModelDTOUpdate model);
     }
 }

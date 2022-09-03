@@ -1,9 +1,8 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Library.API.Project.Migrations
+namespace Library.Project.API.Migrations
 {
     public partial class UserEntityAdd : Migration
     {

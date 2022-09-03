@@ -1,10 +1,11 @@
-﻿using Library.API.Project.Interfaces.Service;
-using Library.API.Project.Models.DTO;
-using Library.API.Project.Models.Entities;
-using Library.API.Project.Models.ViewModels;
+﻿using Library.Project.API.Interfaces.Service;
+using Library.Project.API.Models.DTO.Get;
+using Library.Project.API.Models.DTO.Post;
+using Library.Project.API.Models.DTO.Put;
+using Library.Project.API.Models.Entities;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Library.API.Project.Controllers
+namespace Library.Project.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -18,40 +19,40 @@ namespace Library.API.Project.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<BookDTO>>> GetAllBookModel()
+        public async Task<ActionResult<IEnumerable<BookDTOGet>>> GetAllBookModel()
         {
             var response = await _service.GetAllAsync();
-            if (IsResponseNull(response))
+            if (!IsResponseNull(response))
                 return Ok(response);
 
             return BadRequest(response);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<BookDTO>> GetBookModelById(int id)
+        public async Task<ActionResult<object>> GetBookModelById(int id)
         {
-            var response = await _service.GetDtoByAsync(id);
-            if (IsResponseNull(response))
+            var response = await _service.GetDTOModelById(id);
+            if (!IsResponseNull(response))
                 return Ok(response);
             return NotFound($"Livro não encontrado com o Id {id}!");
         }
 
         [HttpPost]
-        public async Task<ActionResult<object>> PostBookModel(BookModel bookModel)
+        public async Task<ActionResult<object>> PostBookModel(BookDTOPost bookModel)
         {
             var response = await _service.PostAsync(bookModel);
             if (IsValidationValid(response))
                 return Ok("Livro cadastrado com sucesso!");
 
-            return BadRequest(ShowErrors(response));
+            return BadRequest(response);
 
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<object>> PutAuthorModel(int id, BookModel bookModel)
+        public async Task<ActionResult<object>> PutBookModel(int id, BookDTOPut bookModel)
         {
             var response = await _service.UpdateByIdAsync(id, bookModel);
-            if (response.GetType() == typeof(BookEntity))
+            if (IsValidationValid(response))
                 return Ok("Livro atualizado com sucesso!");
 
             return BadRequest(response);
@@ -61,10 +62,11 @@ namespace Library.API.Project.Controllers
         public async Task<ActionResult<object>> DeletBookModel(int id)
         {
             var response = await _service.DeleteByIdAsync(id);
-            if (response.GetType() == typeof(BookEntity))
+            if (IsValidationValid(response))
                 return Ok($"Livro deletado com sucesso!");
 
             return BadRequest(response);
         }
+        private static bool IsValidationValid(object responseValue) => responseValue.GetType() == typeof(BookEntity);
     }
 }

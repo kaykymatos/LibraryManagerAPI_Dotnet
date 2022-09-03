@@ -1,5 +1,5 @@
-﻿using Library.API.Project.ConfigStartApp;
-using Library.API.Project.Data;
+﻿using Library.Project.API.ConfigStartApp;
+using Library.Project.API.Data;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,6 +11,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 
+ConfigurationProgram.ConfigureAutoMapper(builder.Services);
 ConfigurationProgram.ConfigureCors(builder.Services);
 ConfigurationProgram.ConfigureDependencyInjection(builder.Services);
 ConfigurationProgram.ConfigureSwagger(builder.Services);

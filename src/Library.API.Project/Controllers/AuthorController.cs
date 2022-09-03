@@ -1,10 +1,11 @@
-﻿using Library.API.Project.Interfaces.Service;
-using Library.API.Project.Models.DTO;
-using Library.API.Project.Models.Entities;
-using Library.API.Project.Models.ViewModels;
+﻿using Library.Project.API.Interfaces.Service;
+using Library.Project.API.Models.DTO.Get;
+using Library.Project.API.Models.DTO.Post;
+using Library.Project.API.Models.DTO.Put;
+using Library.Project.API.Models.Entities;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Library.API.Project.Controllers
+namespace Library.Project.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -18,39 +19,39 @@ namespace Library.API.Project.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<AuthorDTO>>> GetAllAuthorModels()
+        public async Task<ActionResult<IEnumerable<AuthorDTOGet>>> GetAllAuthorModels()
         {
             var response = await _service.GetAllAsync();
-            if (IsResponseNull(response))
+            if (!IsResponseNull(response))
                 return Ok(response);
 
             return BadRequest("Nenhum resultado encontrado no banco de dados: " + response);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<AuthorDTO>> GetAuthorModelById(int id)
+        public async Task<ActionResult<object>> GetAuthorModelById(int id)
         {
-            var response = await _service.GetDtoByAsync(id);
-            if (IsResponseNull(response))
+            var response = await _service.GetDTOModelById(id);
+            if (!IsResponseNull(response))
                 return Ok(response);
             return NotFound($"Autor não encontrado com o Id {id}!");
         }
 
         [HttpPost]
-        public async Task<ActionResult<AuthorModel>> PostAuthorModel(AuthorModel authorModel)
+        public async Task<ActionResult<AuthorDTOPost>> PostAuthorModel(AuthorDTOPost authorModel)
         {
             var response = await _service.PostAsync(authorModel);
             if (IsValidationValid(response))
                 return Ok("Autor cadastrado com sucesso!");
 
-            return BadRequest(ShowErrors(response));
+            return BadRequest(response);
 
         }
         [HttpPut("{id}")]
-        public async Task<ActionResult<object>> PutAuthorModel(int id, AuthorModel authorModel)
+        public async Task<ActionResult<object>> PutAuthorModel(int id, AuthorDTOPut authorModel)
         {
             var response = await _service.UpdateByIdAsync(id, authorModel);
-            if (response.GetType() == typeof(AuthorEntity))
+            if (IsValidationValid(response))
                 return Ok("Author Atualizado com sucesso!");
 
             return BadRequest(response);
@@ -60,10 +61,11 @@ namespace Library.API.Project.Controllers
         public async Task<ActionResult<object>> DeletAuthorModel(int id)
         {
             var response = await _service.DeleteByIdAsync(id);
-            if (response.GetType() == typeof(AuthorEntity))
+            if (IsValidationValid(response))
                 return Ok($"Author deletado com sucesso!");
 
             return BadRequest(response);
         }
+        private static bool IsValidationValid(object responseValue) => responseValue.GetType() == typeof(AuthorEntity);
     }
 }

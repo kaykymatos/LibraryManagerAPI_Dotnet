@@ -1,7 +1,7 @@
-﻿using Library.API.Project.Models.Entities;
+﻿using Library.Project.API.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Library.API.Project.Data
+namespace Library.Project.API.Data
 {
     public class LibraryAPIContext : DbContext
     {
@@ -23,6 +23,6 @@ namespace Library.API.Project.Data
 
         public DbSet<BookEntity>? BookEntityModel { get; set; }
 
-        public DbSet<Library.API.Project.Models.Entities.UserEntity>? UserEntity { get; set; }
+        public DbSet<Library.Project.API.Models.Entities.UserEntity>? UserEntity { get; set; }
     }
 }

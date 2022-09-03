@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace Library.API.Project.Migrations
+namespace Library.Project.API.Migrations
 {
     public partial class ModificationCreatedDateModels : Migration
     {

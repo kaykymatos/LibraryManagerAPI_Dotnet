@@ -1,63 +1,78 @@
-﻿using FluentValidation.Results;
-using Library.API.Project.Interfaces.Repository;
-using Library.API.Project.Interfaces.Service;
-using Library.API.Project.Models.DTO;
-using Library.API.Project.Models.Entities;
-using Library.API.Project.Models.ViewModels;
-using Library.API.Project.Validation.ValidationModels.PostValidation;
+﻿using AutoMapper;
+using Library.Project.API.Interfaces.Repository;
+using Library.Project.API.Interfaces.Service;
+using Library.Project.API.Models.DTO.Get;
+using Library.Project.API.Models.DTO.Post;
+using Library.Project.API.Models.DTO.Put;
+using Library.Project.API.Models.Entities;
+using Library.Project.API.Validation.ValidationModels.BusinessValidation;
+using Library.Project.API.Validation.ValidationModels.EntityValidation;
 
-namespace Library.API.Project.Service
+namespace Library.Project.API.Service
 {
     public class AuthorService : IAuthorService
     {
         private readonly IAuthorRepository _authorRepository;
         private readonly IBookRepository _bookRepository;
-        public AuthorService(IAuthorRepository authorRepository, IBookRepository bookRepository)
+        public readonly IMapper _mapper;
+
+        public AuthorService(IAuthorRepository authorRepository, IBookRepository bookRepository, IMapper mapper)
         {
             _authorRepository = authorRepository;
             _bookRepository = bookRepository;
+            _mapper = mapper;
         }
-
-        public async Task<ValidationResult> PostAsync(AuthorModel model)
+        public async Task<AuthorDTOGet> GetDTOModelById(int id)
         {
-            var validation = new AuthorModelPostValidation().Validate(model);
-            if (!validation.IsValid)
-                return validation;
-
-            var convertModelToEntity = ConvertViewModelToEntity(model);
-            await _authorRepository.PostAsync(convertModelToEntity);
-            return validation;
+            var dtoModel = await GetEntityById(id);
+            if (dtoModel == null)
+                return null!;
+            return _mapper.Map<AuthorDTOGet>(dtoModel);
         }
-        public async Task<IEnumerable<AuthorDTO>> GetAllAsync()
+        public async Task<AuthorEntity> GetEntityById(int id)
+        {
+            var entity = await _authorRepository.GetEntityByIdAsync(id);
+            if (entity == null)
+                return null!;
+            return entity;
+        }
+        public async Task<IEnumerable<AuthorDTOGet>> GetAllAsync()
         {
             var response = await _authorRepository.GetAllAsync();
-            List<AuthorDTO> listDTO = new();
+            List<AuthorDTOGet> listDTO = new();
             foreach (var item in response)
             {
-                var convertModelToDTO = ConvertEntityToDTOModel(item);
+                var convertModelToDTO = _mapper.Map<AuthorDTOGet>(item);
                 listDTO.Add(convertModelToDTO);
             }
             return listDTO;
         }
-        public async Task<AuthorDTO> GetDtoByAsync(int id)
+        public async Task<object> PostAsync(AuthorDTOPost model)
         {
-            var response = await _authorRepository.GetByIdAsync(id);
-            if (response == null)
-                return null!;
-            var convertEntityToDTO = ConvertEntityToDTOModel(response);
+            List<string> validationErrors = new();
+            var convertModelToEntity = _mapper.Map<AuthorEntity>(model);
+            var validation = new AuthorValidation(false).Validate(convertModelToEntity);
+            var businessValidation = new AuthorBusinessValidation(_authorRepository, false).Validate(convertModelToEntity);
 
-            return convertEntityToDTO;
+            if (!validation.IsValid)
+                return validation.Errors.Select(x => x.ErrorMessage).ToList();
+
+            if (!businessValidation.IsValid)
+                return businessValidation.Errors.Select(x => x.ErrorMessage).ToList();
+
+            convertModelToEntity.CreatedDate = DateTime.Parse(DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss"));
+            var postEntityModel = await _authorRepository.PostAsync(convertModelToEntity);
+            return postEntityModel;
         }
-        public async Task<object> UpdateByIdAsync(int id, AuthorModel model)
+        public async Task<object> UpdateByIdAsync(int id, AuthorDTOPut model)
         {
-            var verification = await ValidationOnUpdateModel(id, model);
+            var findAuthorEntity = await _authorRepository.GetEntityByIdAsync(id);
+            var converteModelToEntity = _mapper.Map<AuthorEntity>(model);
+
+            var verification = await ValidationOnUpdateModel(id, converteModelToEntity);
+
             if (verification.Any())
                 return verification;
-
-            var findAuthorEntity = await _authorRepository.GetByIdAsync(id);
-            var converteModelToEntity = ConvertViewModelToEntity(model);
-            converteModelToEntity.Id = id;
-            converteModelToEntity.CreatedDate = findAuthorEntity.CreatedDate;
 
             var response = await _authorRepository.UpdateAsync(id, converteModelToEntity);
             return response;
@@ -72,69 +87,43 @@ namespace Library.API.Project.Service
             var response = await _authorRepository.DeleteAsync(findAuthorEntity);
             return response;
         }
-        public async Task<AuthorEntity> GetEntityById(int id)
-        {
-            var entity = await _authorRepository.GetByIdAsync(id);
-            return entity;
-        }
 
-        public AuthorEntity ConvertViewModelToEntity(AuthorModel model)
-        {
-            if (model == null)
-                return null!;
-            AuthorEntity entity = new()
-            {
-                Name = model.Name.ToUpper().Trim(),
-                BirthDate = DateTime.Parse(model.BirthDate.ToString("yyyy-MM-dd HH:mm:ss")),
-                CreatedDate = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"))
-            };
-            return entity;
-        }
-        public AuthorDTO ConvertEntityToDTOModel(AuthorEntity entity)
-        {
-            var dtoModel = new AuthorDTO()
-            {
-                Id = entity.Id,
-                Name = entity.Name,
-                BirthDate = entity.BirthDate,
-                CreatedDate = entity.CreatedDate
-            };
-            return dtoModel;
-        }
         public async Task<List<string>> VerificationOnDeleteAuthorEntity(int id)
         {
-            var modelExists = await VerificationIfModelExists(id);
-            if (modelExists.Any())
-                return modelExists;
-
             List<string> errorsVerificationOnDelete = new();
+            var findBookEntity = await _authorRepository.GetEntityByIdAsync(id);
+            if (findBookEntity == null)
+                errorsVerificationOnDelete.Add("Autor não encontrado");
 
             var authorBooks = await _bookRepository.GetAllAuthorBooksByAuthorId(id);
             if (authorBooks.Any())
                 errorsVerificationOnDelete.Add($"O Author com o id {id} tem livros vinculados!");
             return errorsVerificationOnDelete;
         }
-        public async Task<List<string>> VerificationIfModelExists(int id)
+        public async Task<List<string>> ValidationOnUpdateModel(int id, AuthorEntity model)
         {
-            List<string> errorsVerificationOnDelete = new();
-            if (id <= 0)
-                errorsVerificationOnDelete.Add("O ID deve ser maior que 0!");
-            var entityModel = await _authorRepository.GetByIdAsync(id);
-            if (entityModel == null)
-                errorsVerificationOnDelete.Add($"O Autor não foi encontrado no banco de dados com o id: {id}!");
-            return errorsVerificationOnDelete;
-        }
-        public async Task<List<string>> ValidationOnUpdateModel(int id, AuthorModel model)
-        {
-            var verificationIfExists = await VerificationIfModelExists(id);
-            if (verificationIfExists.Any())
-                return verificationIfExists;
+            List<string> errors = new();
+            var findAuthorEntity = await _authorRepository.GetEntityByIdAsync(id);
+            if (findAuthorEntity == null)
+            {
+                errors.Add("Autor nao encontrado");
+                return errors;
+            }
+            model.Id = id;
+            model.Name = findAuthorEntity.Name;
+            model.CreatedDate = findAuthorEntity.CreatedDate;
 
-            var validation = new AuthorModelPostValidation().Validate(model);
+            var validation = new AuthorValidation(true).Validate(model);
+            var businessValidation = new AuthorBusinessValidation(_authorRepository, true).Validate(model);
             if (!validation.IsValid)
                 return validation.Errors.Select(x => x.ErrorMessage).ToList();
 
+            if (!businessValidation.IsValid)
+                return businessValidation.Errors.Select(x => x.ErrorMessage).ToList();
+
             return new List<string>();
         }
+
+
     }
 }

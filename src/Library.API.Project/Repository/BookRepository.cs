@@ -1,9 +1,9 @@
-﻿using Library.API.Project.Data;
-using Library.API.Project.Interfaces.Repository;
-using Library.API.Project.Models.Entities;
+﻿using Library.Project.API.Data;
+using Library.Project.API.Interfaces.Repository;
+using Library.Project.API.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Library.API.Project.Repository
+namespace Library.Project.API.Repository
 {
     public class BookRepository : BaseRepository<BookEntity>, IBookRepository
     {

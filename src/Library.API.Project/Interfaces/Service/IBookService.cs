@@ -1,10 +1,11 @@
-﻿using Library.API.Project.Models.DTO;
-using Library.API.Project.Models.Entities;
-using Library.API.Project.Models.ViewModels;
+﻿using Library.Project.API.Models.DTO.Get;
+using Library.Project.API.Models.DTO.Post;
+using Library.Project.API.Models.DTO.Put;
+using Library.Project.API.Models.Entities;
 
-namespace Library.API.Project.Interfaces.Service
+namespace Library.Project.API.Interfaces.Service
 {
-    public interface IBookService : IBaseService<BookEntity, BookModel, BookDTO>
+    public interface IBookService : IBaseService<BookEntity, BookDTOPut, BookDTOPost, BookDTOGet>
     {
     }
 }

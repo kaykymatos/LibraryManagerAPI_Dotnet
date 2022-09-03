@@ -1,13 +1,18 @@
-﻿using Library.API.Project.Interfaces.Repository;
-using Library.API.Project.Interfaces.Service;
-using Library.API.Project.Repository;
-using Library.API.Project.Service;
+﻿using Library.Project.API.Interfaces.Repository;
+using Library.Project.API.Interfaces.Service;
+using Library.Project.API.MappingModels;
+using Library.Project.API.Repository;
+using Library.Project.API.Service;
 using Microsoft.OpenApi.Models;
 
-namespace Library.API.Project.ConfigStartApp
+namespace Library.Project.API.ConfigStartApp
 {
     public class ConfigurationProgram
     {
+        public static void ConfigureAutoMapper(IServiceCollection services)
+        {
+            services.AddAutoMapper(typeof(AutoMappingModels));
+        }
         public static void ConfigureSwagger(IServiceCollection services)
         {
             services.AddSwaggerGen(c =>
@@ -59,6 +64,9 @@ namespace Library.API.Project.ConfigStartApp
 
             services.AddScoped<IAuthorService, AuthorService>();
             services.AddScoped<IBookService, BookService>();
+
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IUserService, UserService>();
         }
     }
 }
